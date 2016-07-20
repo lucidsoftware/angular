@@ -50,7 +50,8 @@ describe('reflector_host', () => {
           skipMetadataEmit: false,
           strictMetadataEmit: false,
           skipTemplateCodegen: false,
-          trace: false
+          trace: false,
+          googleClosureOutput: false
         },
         context);
   });
