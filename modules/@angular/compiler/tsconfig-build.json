@@ -1,11 +1,14 @@
 {
+  "angularCompilerOptions": {
+    "googleClosureOutput": true
+  },
   "compilerOptions": {
     "baseUrl": ".",
     "declaration": true,
     "stripInternal": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "module": "es2015",
+    "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "../../../dist/packages-dist/compiler",
     "paths": {
