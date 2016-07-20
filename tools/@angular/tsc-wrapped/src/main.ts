@@ -37,7 +37,7 @@ export function main(project: string, basePath?: string, codegen?: CodegenExtens
       tsc.typeCheck(host, newProgram);
 
       // Emit *.js with Decorators lowered to Annotations, and also *.js.map
-      const tsicklePreProcessor = new TsickleHost(host, newProgram);
+      const tsicklePreProcessor = new TsickleHost(host, newProgram, ngOptions);
       tsc.emit(tsicklePreProcessor, newProgram);
 
       if (!ngOptions.skipMetadataEmit) {
