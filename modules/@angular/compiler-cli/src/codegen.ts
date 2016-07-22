@@ -114,9 +114,29 @@ export class CodeGenerator {
                                   const sourceFile = this.program.getSourceFile(fileMeta.fileUrl);
                                   const emitPath =
                                       this.calculateEmitPath(generatedModule.moduleUrl);
+                                  var source = generatedModule.source;
+                                  var errorRegex = /this\.parent\.[^\.]+\.transform/g;
+                                  var errorMatch = errorRegex.exec(source);
+                                  if(errorMatch && errorMatch.length) {
+                                      var fixRegex = /<(.*?)>this\.parent/;
+                                      var fixMatch = fixRegex.exec(source);
+                                      if(fixMatch && fixMatch.length) {
+                                          source = source.replace(errorMatch[0], '(<'+fixMatch[1]+'>this.parent)' + errorMatch[0].substr(11));
+                                      }
+                                  }
+
+                                  errorRegex = /this\.parent\.parent\.[^\.]+\.transform/g;
+                                  errorMatch = errorRegex.exec(source);
+                                  if(errorMatch && errorMatch.length) {
+                                      fixRegex = /<(.*?)>this\.parent\.parent/;
+                                      fixMatch = fixRegex.exec(source);
+                                      if(fixMatch && fixMatch.length) {
+                                          source = source.replace(errorMatch[0], '(<'+fixMatch[1]+'>this.parent.parent)' + errorMatch[0].substr(18));
+                                      }
+                                  }
                                   this.host.writeFile(
-                                      emitPath, PREAMBLE + generatedModule.source, false, () => {},
-                                      [sourceFile]);
+                                    emitPath, PREAMBLE + source, false, () => {},
+                                    [sourceFile]);
                                 });
                               })))
         .catch((e) => { console.error(e.stack); });
