@@ -13,6 +13,10 @@ import {PromiseCompleter, PromiseWrapper} from '../facade/promise';
 
 @Injectable()
 export class XHRImpl extends XHR {
+  constructor() {
+    super();
+  }
+
   get(url: string): Promise<string> {
     var completer: PromiseCompleter<string> = PromiseWrapper.completer();
     var xhr = new XMLHttpRequest();
