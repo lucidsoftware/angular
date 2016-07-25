@@ -147,6 +147,10 @@ export abstract class DomSanitizationService implements SanitizationService {
 
 @Injectable()
 export class DomSanitizationServiceImpl extends DomSanitizationService {
+  constructor() {
+    super();
+  }
+
   sanitize(ctx: SecurityContext, value: any): string {
     if (value == null) return null;
     switch (ctx) {
