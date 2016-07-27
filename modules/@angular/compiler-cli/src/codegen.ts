@@ -116,22 +116,25 @@ export class CodeGenerator {
                                       this.calculateEmitPath(generatedModule.moduleUrl);
                                   var source = generatedModule.source;
                                   var errorRegex = /this\.parent\.[^\.]+\.transform/g;
-                                  var errorMatch = errorRegex.exec(source);
-                                  if(errorMatch && errorMatch.length) {
+                                  var errorMatches = source.match(errorRegex);
+                                  if (errorMatches && errorMatches.length) {
                                       var fixRegex = /<(.*?)>this\.parent/;
                                       var fixMatch = fixRegex.exec(source);
-                                      if(fixMatch && fixMatch.length) {
-                                          source = source.replace(errorMatch[0], '(<'+fixMatch[1]+'>this.parent)' + errorMatch[0].substr(11));
+                                      if (fixMatch && fixMatch.length) {
+                                          errorMatches.forEach(function(errorMatch) {
+                                              source = source.replace(errorMatch, '(<' + fixMatch[1] + '>this.parent)' + errorMatch.substr(11));
+                                          });
                                       }
                                   }
-
                                   errorRegex = /this\.parent\.parent\.[^\.]+\.transform/g;
-                                  errorMatch = errorRegex.exec(source);
-                                  if(errorMatch && errorMatch.length) {
+                                  errorMatches = source.match(errorRegex);
+                                  if (errorMatches && errorMatches.length) {
                                       fixRegex = /<(.*?)>this\.parent\.parent/;
                                       fixMatch = fixRegex.exec(source);
-                                      if(fixMatch && fixMatch.length) {
-                                          source = source.replace(errorMatch[0], '(<'+fixMatch[1]+'>this.parent.parent)' + errorMatch[0].substr(18));
+                                      if (fixMatch && fixMatch.length) {
+                                          errorMatches.forEach(function(errorMatch) {
+                                              source = source.replace(errorMatch, '(<' + fixMatch[1] + '>this.parent)' + errorMatch.substr(18));
+                                          });
                                       }
                                   }
                                   this.host.writeFile(
