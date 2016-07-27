@@ -20,8 +20,8 @@ export class XHRImpl extends XHR {
   get(url: string): Promise<string> {
     var completer: PromiseCompleter<string> = PromiseWrapper.completer();
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.responseType = 'text';
+    xhr.open('GET', url, false);
+    // xhr.responseType = 'text';
 
     xhr.onload = function() {
       // responseText is the old-school way of retrieving response (supported by IE8 & 9)
