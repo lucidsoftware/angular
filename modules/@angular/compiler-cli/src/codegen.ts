@@ -121,7 +121,7 @@ export class CodeGenerator {
                                       fixMatch = fixRegex.exec(source);
                                       if (fixMatch && fixMatch.length) {
                                           errorMatches.forEach(function(errorMatch) {
-                                              source = source.replace(errorMatch, '(<' + fixMatch[1] + '>this.parent)' + errorMatch.substr(18));
+                                              source = source.replace(errorMatch, '(<' + fixMatch[1] + '>this.parent.parent)' + errorMatch.substr(18));
                                           });
                                       }
                                   }
