@@ -45,18 +45,28 @@ interface DecoratorInvocation {
   constructor(delegate: ts.CompilerHost, private program: ts.Program,
     private ngOptions: NgOptions) {
     super(delegate);
-    this.substituteSource = {};
-    this.subsitutingHost = this.createSourceReplacingCompilerHost();
+
+    let tsickleOutput: ts.Map<string> = {};
+    if (ngOptions.googleClosureOutput) {
+      for (let file of program.getSourceFiles()) {
+        let fileName = file.fileName;
+        let {output, externs, diagnostics} =
+            tsickle.annotate(program, program.getSourceFile(fileName), {untyped:true});
+        check(diagnostics);
+        tsickleOutput[ts.sys.resolvePath(fileName)] = output;
+      }
+    }
+
+    this.subsitutingHost = this.createSourceReplacingCompilerHost(tsickleOutput);
     this.substituteProgram = ts.createProgram(
       program.getRootFileNames(),
       program.getCompilerOptions(),
-      delegate,
+      this.subsitutingHost,
       program
     );
     tsc.typeCheck(this.subsitutingHost, this.substituteProgram);
   }
 
-  private substituteSource: ts.Map<string>;
   private subsitutingHost: ts.CompilerHost;
   private substituteProgram: ts.Program;
 
@@ -64,17 +74,10 @@ interface DecoratorInvocation {
       (fileName: string, languageVersion: ts.ScriptTarget, onError?: (message: string) => void) => {
         const originalContent = this.delegate.readFile(fileName);
         let newContent = originalContent;
+
         if (/\.d\.ts$/.test(fileName)) {
           return ts.createSourceFile(fileName, originalContent, languageVersion, true);
         } else {
-          if (this.ngOptions.googleClosureOutput) {
-            const annotateResult =
-                tsickle.annotate(this.program, this.program.getSourceFile(fileName), {untyped:true});
-            if (annotateResult.diagnostics) {
-              this.diagnostics.push(...annotateResult.diagnostics);
-            }
-            this.substituteSource[fileName] = annotateResult.output;
-          }
           try {
             let sourceFile: ts.SourceFile;
             if (this.ngOptions.googleClosureOutput) {
@@ -96,18 +99,18 @@ interface DecoratorInvocation {
         }
       };
 
-  createSourceReplacingCompilerHost = (): ts.CompilerHost => {
+  createSourceReplacingCompilerHost = (substituteSource: ts.Map<string>): ts.CompilerHost => {
     let getSourceFile = (
         fileName: string, languageVersion: ts.ScriptTarget,
         onError?: (message: string) => void): ts.SourceFile => {
-      if (fileName in this.substituteSource) {
-        return ts.createSourceFile(fileName, this.substituteSource[fileName], languageVersion);
+      if (fileName in substituteSource) {
+        return ts.createSourceFile(fileName, substituteSource[fileName], languageVersion);
       }
       return this.delegate.getSourceFile(fileName, languageVersion, onError);
     }
 
     return {
-      getSourceFile,
+      getSourceFile: getSourceFile,
       getCancellationToken: this.getCancellationToken,
       getDefaultLibFileName: this.getDefaultLibFileName,
       writeFile: this.writeFile,
