@@ -50,10 +50,12 @@ interface DecoratorInvocation {
     if (ngOptions.googleClosureOutput) {
       for (let file of program.getSourceFiles()) {
         let fileName = file.fileName;
-        let {output, externs, diagnostics} =
-            tsickle.annotate(program, program.getSourceFile(fileName), {untyped:true});
-        check(diagnostics);
-        tsickleOutput[ts.sys.resolvePath(fileName)] = output;
+        if (!/\.d\.ts$/.test(fileName)) {
+          let {output, externs, diagnostics} =
+              tsickle.annotate(program, program.getSourceFile(fileName), {untyped:true});
+          check(diagnostics);
+          tsickleOutput[ts.sys.resolvePath(fileName)] = output;
+        }
       }
     }
 
@@ -79,13 +81,13 @@ interface DecoratorInvocation {
           return ts.createSourceFile(fileName, originalContent, languageVersion, true);
         } else {
           try {
-            let sourceFile: ts.SourceFile;
+            let program: ts.Program;
             if (this.ngOptions.googleClosureOutput) {
-              sourceFile = this.substituteProgram.getSourceFile(fileName);
+              program = this.substituteProgram;
             } else {
-              sourceFile = this.program.getSourceFile(fileName);
+              program = this.program;
             }
-            const converted = tsickle.convertDecorators(this.program.getTypeChecker(), sourceFile);
+            const converted = tsickle.convertDecorators(program.getTypeChecker(), program.getSourceFile(fileName));
             if (converted.diagnostics) {
               this.diagnostics.push(...converted.diagnostics);
             }
