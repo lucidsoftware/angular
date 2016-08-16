@@ -588,7 +588,7 @@ export class CompileMetadataResolver {
     const compileProviders: Array<cpl.CompileProviderMetadata|cpl.CompileTypeMetadata|any[]> = [];
     providers.forEach((provider: any, providerIdx: number) => {
       provider = resolveForwardRef(provider);
-      if (provider && typeof provider == 'object' && provider.hasOwnProperty('provide')) {
+      if (provider && typeof provider == 'object' && !!provider.provide) {
         provider = new cpl.ProviderMeta(provider.provide, provider);
       }
       let compileProvider: cpl.CompileProviderMetadata|cpl.CompileTypeMetadata|any[];
