@@ -258,7 +258,7 @@ export class CompileTokenMetadata implements CompileMetadataWithIdentifier {
  * don't have a `runtime` value given by the `StaticReflector`. E.g. see the `identifiers`
  * file where we have some identifiers hard coded by name/module path.
  *
- * TODO(tbosch): Eventually, all of these places should go through the static reflector
+ * TODO(tbosch): Eventually, all of these places should go through the (static) reflector
  * as well, providing them with a valid `StaticSymbol` that is again a singleton.
  */
 export class CompileIdentifierMap<KEY extends CompileMetadataWithIdentifier, VALUE> {
