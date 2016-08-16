@@ -288,8 +288,7 @@ export function makeDecorator(annotationCls: any, chainFn: (fn: Function) => voi
 
 export function makeParamDecorator(annotationCls: any): any {
   function ParamDecoratorFactory(...args: any[]): any {
-    var annotationInstance = Object.create(annotationCls.prototype);
-    annotationCls.apply(annotationInstance, args);
+    var annotationInstance = new annotationCls(...args);
     if (this instanceof annotationCls) {
       return annotationInstance;
     } else {
