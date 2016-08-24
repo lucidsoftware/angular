@@ -5,7 +5,6 @@ import * as ts from 'typescript';
 import NgOptions from './options';
 import {check, tsc} from './tsc';
 
-import NgOptions from './options';
 import {MetadataCollector} from './collector';
 
 
