@@ -1,7 +1,5 @@
 {
-  "angularCompilerOptions": {
-    "googleClosureOutput": true
-  },
+
   "compilerOptions": {
     "baseUrl": ".",
     "declaration": true,
@@ -26,6 +24,7 @@
     "../../../node_modules/zone.js/dist/zone.js.d.ts"
   ],
   "angularCompilerOptions": {
-    "strictMetadataEmit": true
+    "strictMetadataEmit": true,
+    "googleClosureOutput": true
   }
 }
