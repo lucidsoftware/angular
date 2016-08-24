@@ -66,7 +66,9 @@ interface DecoratorInvocation {
       this.subsitutingHost,
       program
     );
-    tsc.typeCheck(this.subsitutingHost, this.substituteProgram);
+    try{
+      tsc.typeCheck(this.subsitutingHost, this.substituteProgram);
+    } catch(e) {}
   }
 
   private subsitutingHost: ts.CompilerHost;
