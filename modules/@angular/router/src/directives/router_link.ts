@@ -35,7 +35,7 @@ import {UrlTree} from '../url_tree';
  *
  * For instance `['/team', teamId, 'user', userName, {details: true}]`
  * means that we want to generate a link to `/team/11/user/bob;details=true`.
- * Multiple static segments can be merged into one (e.g., `['/team/11/user', userName, {details:
+ * Multiple (static) segments can be merged into one (e.g., `['/team/11/user', userName, {details:
  true}]`).
  *
  * The first segment name can be prepended with `/`, `./`, or `../`:

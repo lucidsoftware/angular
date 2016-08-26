@@ -30,7 +30,7 @@ import {isJsObject} from './http_utils';
  * ```
  *
  * The Response's interface is inspired by the Response constructor defined in the [Fetch
- * Spec](https://fetch.spec.whatwg.org/#response-class), but is considered a static value whose body
+ * Spec](https://fetch.spec.whatwg.org/#response-class), but is considered a (static) value whose body
  * can be accessed many times. There are other differences in the implementation, but this is the
  * most significant.
  *
