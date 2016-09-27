@@ -1,19 +1,22 @@
 {
+  "angularCompilerOptions": {
+    "googleClosureOutput": true
+  },
   "compilerOptions": {
     "baseUrl": ".",
     "declaration": true,
     "stripInternal": true,
     "experimentalDecorators": true,
-    "module": "es2015",
+    "module": "commonjs",
     "moduleResolution": "node",
-    "outDir": "../../../dist/packages-dist/core",
+    "outDir": "../../../dist/packages-closure/core",
     "paths": {
       "rxjs/*": ["../../../node_modules/rxjs/*"]
     },
     "rootDir": ".",
     "sourceMap": true,
     "inlineSources": true,
-    "target": "es5",
+    "target": "es2015",
     "lib": ["es2015", "dom"],
     "skipLibCheck": true
   },
@@ -23,6 +26,7 @@
     "../../system.d.ts"
   ],
   "angularCompilerOptions": {
-    "strictMetadataEmit": true
+    "strictMetadataEmit": true,
+    "googleClosureOutput": true
   }
 }

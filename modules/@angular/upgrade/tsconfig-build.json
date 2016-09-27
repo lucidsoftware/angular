@@ -4,7 +4,7 @@
     "declaration": true,
     "stripInternal": true,
     "experimentalDecorators": true,
-    "module": "commonjs",
+    "module": "es2015",
     "moduleResolution": "node",
     "outDir": "../../../dist/packages-dist/upgrade",
     "paths": {
@@ -26,7 +26,6 @@
     "../../../node_modules/zone.js/dist/zone.js.d.ts"
   ],
   "angularCompilerOptions": {
-    "strictMetadataEmit": true,
-    "googleClosureOutput": true
+    "strictMetadataEmit": true
   }
 }

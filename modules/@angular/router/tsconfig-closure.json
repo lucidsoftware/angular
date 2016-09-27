@@ -1,0 +1,35 @@
+{
+  "angularCompilerOptions": {
+    "googleClosureOutput": true
+  },
+  "compilerOptions": {
+    "baseUrl": ".",
+    "declaration": true,
+    "stripInternal": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmitOnError": false,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "outDir": "../../../dist/packages-closure/router",
+    "paths": {
+      "@angular/core": ["../../../dist/packages-closure/core"],
+      "@angular/common": ["../../../dist/packages-closure/common"],
+      "@angular/platform-browser": ["../../../dist/packages-closure/platform-browser"]
+    },
+    "rootDir": ".",
+    "sourceMap": true,
+    "inlineSources": true,
+    "lib": ["es2015", "dom"],
+    "target": "es2015",
+    "skipLibCheck": true
+  },
+  "files": [
+    "index.ts"
+  ],
+  "angularCompilerOptions": {
+    "strictMetadataEmit": true
+  }
+}

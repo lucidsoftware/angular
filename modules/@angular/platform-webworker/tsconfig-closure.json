@@ -1,21 +1,26 @@
 {
+  "angularCompilerOptions": {
+    "googleClosureOutput": true
+  },
   "compilerOptions": {
     "baseUrl": ".",
     "declaration": true,
     "stripInternal": true,
     "experimentalDecorators": true,
-    "module": "es2015",
+    "module": "commonjs",
     "moduleResolution": "node",
-    "outDir": "../../../dist/packages-dist/common",
+    "outDir": "../../../dist/packages-closure/platform-webworker",
     "paths": {
-      "@angular/core": ["../../../dist/packages-dist/core"]
+      "@angular/core": ["../../../dist/packages-closure/core"],
+      "@angular/common": ["../../../dist/packages-closure/common"],
+      "@angular/platform-browser": ["../../../dist/packages-closure/platform-browser"]
     },
     "rootDir": ".",
     "sourceMap": true,
     "inlineSources": true,
-    "target": "es5",
+    "target": "es2015",
     "skipLibCheck": true,
-    "lib": [ "es2015", "dom" ]
+    "lib": ["es2015", "dom"]
   },
   "files": [
     "index.ts",

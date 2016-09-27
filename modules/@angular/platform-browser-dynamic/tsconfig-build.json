@@ -1,13 +1,10 @@
 {
-  "angularCompilerOptions": {
-    "googleClosureOutput": true
-  },
   "compilerOptions": {
     "baseUrl": ".",
     "declaration": true,
     "stripInternal": true,
     "experimentalDecorators": true,
-    "module": "commonjs",
+    "module": "es2015",
     "moduleResolution": "node",
     "outDir": "../../../dist/packages-dist/platform-browser-dynamic",
     "paths": {
