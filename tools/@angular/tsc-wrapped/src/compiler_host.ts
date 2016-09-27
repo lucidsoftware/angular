@@ -146,7 +146,7 @@ interface DecoratorInvocation {
       // Resolve the path against the dirname of the current module.
       importPath = path.join(path.dirname(context), importPath);
     }
-    const dist = /dist\/packages-dist\/([^\/]+)\/esm\/(.*)/;
+    const dist = /dist\/packages-closure\/([^\/]+)\/(.*)/;
     if (dist.test(importPath)) {
       importPath = importPath.replace(dist, (match:string, pkg:string, impt:string) => {
         return `@angular/${pkg}/${impt}`;
