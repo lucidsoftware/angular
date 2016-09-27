@@ -1,7 +1,4 @@
 {
-  "angularCompilerOptions": {
-    "googleClosureOutput": true
-  },
   "compilerOptions": {
     "baseUrl": ".",
     "declaration": true,
@@ -30,6 +27,7 @@
     "index.ts"
   ],
   "angularCompilerOptions": {
+    "googleClosureOutput": true,
     "strictMetadataEmit": true
   }
 }
