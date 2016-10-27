@@ -109,7 +109,7 @@ interface DecoratorInvocation {
     let getSourceFile = (
         fileName: string, languageVersion: ts.ScriptTarget,
         onError?: (message: string) => void): ts.SourceFile => {
-      if (fileName in substituteSource) {
+      if (substituteSource.has(fileName)) {
         return ts.createSourceFile(fileName, substituteSource.get(fileName), languageVersion);
       }
       return this.delegate.getSourceFile(fileName, languageVersion, onError);
