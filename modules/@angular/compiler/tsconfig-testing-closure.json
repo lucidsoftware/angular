@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "declaration": true,
+    "stripInternal": true,
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "../../../dist/packages-closure/compiler/",
+    "paths": {
+      "@angular/core": ["../../../dist/packages-closure/core"],
+      "@angular/core/testing": ["../../../dist/packages-closure/core/testing"],
+      "@angular/compiler": ["../../../dist/packages-closure/compiler"]
+    },
+    "rootDir": ".",
+    "sourceMap": true,
+    "inlineSources": true,
+    "lib": ["es6", "dom"],
+    "target": "es2015",
+    "skipLibCheck": true
+  },
+  "files": [
+    "testing/index.ts",
+    "../../../node_modules/zone.js/dist/zone.js.d.ts"
+  ],
+  "angularCompilerOptions": {
+    "googleClosureOutput": true
+  }
+}

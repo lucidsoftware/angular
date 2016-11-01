@@ -115,7 +115,10 @@ do
       $TSC -p ${SRCDIR}/tsconfig-build.json
     fi
 
-    if [[ -e ${SRCDIR}/tsconfig-testing.json ]]; then
+    if [[ ${ISCLOSURE} == true && -e ${SRCDIR}/tsconfig-testing-closure.json ]]; then
+      echo "======      COMPILING TESTING CLOSURE: ${TSC} -p ${SRCDIR}/tsconfig-testing-closure.json"
+      $TSC -p ${SRCDIR}/tsconfig-testing-closure.json
+    elif [[ -e ${SRCDIR}/tsconfig-testing.json ]]; then
       echo "======      COMPILING TESTING: ${TSC} -p ${SRCDIR}/tsconfig-testing.json"
       $TSC -p ${SRCDIR}/tsconfig-testing.json
     fi

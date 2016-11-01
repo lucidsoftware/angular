@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "declaration": true,
+    "stripInternal": true,
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "../../../dist/packages-closure/platform-browser/",
+    "paths": {
+      "@angular/core": ["../../../dist/packages-closure/core"],
+      "@angular/core/testing": ["../../../dist/packages-closure/core/testing"],
+      "@angular/common": ["../../../dist/packages-closure/common"],
+      "@angular/common/testing": ["../../../dist/packages-closure/common/testing"],
+      "@angular/platform-browser": ["../../../dist/packages-closure/platform-browser"]
+    },
+    "rootDir": ".",
+    "sourceMap": true,
+    "inlineSources": true,
+    "lib": ["es6", "dom"],
+    "target": "es2015",
+    "skipLibCheck": true
+  },
+  "files": [
+    "testing/index.ts",
+    "../../../node_modules/@types/hammerjs/index.d.ts",
+    "../../../node_modules/@types/jasmine/index.d.ts",
+    "../../../node_modules/@types/protractor/index.d.ts",
+    "../../../node_modules/zone.js/dist/zone.js.d.ts"
+  ],
+  "angularCompilerOptions": {
+    "strictMetadataEmit": true,
+    "googleClosureOutput": true
+  }
+}
