@@ -111,119 +111,138 @@ for PACKAGE in ${PACKAGES[@]}
 do
   PWD=`pwd`
   SRCDIR=${PWD}/modules/@angular/${PACKAGE}
-  DESTDIR=${PWD}/dist/packages-dist/${PACKAGE}
-  UMD_ES5_PATH=${DESTDIR}/bundles/${PACKAGE}.umd.js
-  UMD_TESTING_ES5_PATH=${DESTDIR}/bundles/${PACKAGE}-testing.umd.js
-  UMD_STATIC_ES5_PATH=${DESTDIR}/bundles/${PACKAGE}-static.umd.js
-  UMD_UPGRADE_ES5_PATH=${DESTDIR}/bundles/${PACKAGE}-upgrade.umd.js
-  UMD_ES5_MIN_PATH=${DESTDIR}/bundles/${PACKAGE}.umd.min.js
-  UMD_STATIC_ES5_MIN_PATH=${DESTDIR}/bundles/${PACKAGE}-static.umd.min.js
-  UMD_UPGRADE_ES5_MIN_PATH=${DESTDIR}/bundles/${PACKAGE}-upgrade.umd.min.js
+  DESTDIRS=(${PWD}/dist/packages-dist/${PACKAGE}
+    ${PWD}/dist/packages-closure/${PACKAGE}
+  )
+  ISCLOSURE=false
+  for DESTDIR in ${DESTDIRS[@]}
+  do
+    rm -rf ${DESTDIR}
 
-  if [[ ${PACKAGE} != router ]]; then
-    LICENSE_BANNER=${PWD}/modules/@angular/license-banner.txt
-  fi
-  if [[ ${PACKAGE} == router ]]; then
-    LICENSE_BANNER=${PWD}/modules/@angular/router-license-banner.txt
-  fi
+    if [[ ${ISCLOSURE} == true && -e ${SRCDIR}/tsconfig-closure.json ]]; then
+      echo "======      COMPILING CLOSURE: ${TSC} -p ${SRCDIR}/tsconfig-closure.json"
+      $TSC -p ${SRCDIR}/tsconfig-closure.json
+    else
+      echo "======      COMPILING: ${TSC} -p ${SRCDIR}/tsconfig-build.json        ====="
+      $TSC -p ${SRCDIR}/tsconfig-build.json
+    fi
 
-  rm -rf ${DESTDIR}
+    if [[ -e ${SRCDIR}/tsconfig-upgrade.json ]]; then
+      echo "======      COMPILING: ${TSC} -p ${SRCDIR}/tsconfig-upgrade.json        ====="
+      $TSC -p ${SRCDIR}/tsconfig-upgrade.json
+    fi
 
-  echo "======      COMPILING: ${TSC} -p ${SRCDIR}/tsconfig-build.json        ====="
-  $TSC -p ${SRCDIR}/tsconfig-build.json
+    if [[ ${ISCLOSURE} == true && -e ${SRCDIR}/tsconfig-testing-closure.json ]]; then
+      echo "======      COMPILING TESTING CLOSURE: ${TSC} -p ${SRCDIR}/tsconfig-testing-closure.json"
+      $TSC -p ${SRCDIR}/tsconfig-testing-closure.json
+    elif [[ -e ${SRCDIR}/tsconfig-testing.json ]]; then
+      echo "======      COMPILING TESTING: ${TSC} -p ${SRCDIR}/tsconfig-testing.json"
+      $TSC -p ${SRCDIR}/tsconfig-testing.json
+    fi
 
-  if [[ -e ${SRCDIR}/tsconfig-upgrade.json ]]; then
-    echo "======      COMPILING: ${TSC} -p ${SRCDIR}/tsconfig-upgrade.json        ====="
-    $TSC -p ${SRCDIR}/tsconfig-upgrade.json
-  fi
+    if [[ -e ${SRCDIR}/tsconfig-2015.json ]]; then
+      echo "======      COMPILING ESM: ${TSC} -p ${SRCDIR}/tsconfig-2015.json"
+      ${TSC} -p ${SRCDIR}/tsconfig-2015.json
+    fi
 
-  cp ${SRCDIR}/package.json ${DESTDIR}/
-  cp ${PWD}/modules/@angular/README.md ${DESTDIR}/
+    cp ${SRCDIR}/package.json ${DESTDIR}/
+    cp ${PWD}/modules/@angular/README.md ${DESTDIR}/
 
-  if [[ -e ${SRCDIR}/tsconfig-testing.json ]]; then
-    echo "======      COMPILING TESTING: ${TSC} -p ${SRCDIR}/tsconfig-testing.json"
-    $TSC -p ${SRCDIR}/tsconfig-testing.json
-  fi
+    UMD_ES5_PATH=${DESTDIR}/bundles/${PACKAGE}.umd.js
+    UMD_TESTING_ES5_PATH=${DESTDIR}/bundles/${PACKAGE}-testing.umd.js
+    UMD_STATIC_ES5_PATH=${DESTDIR}/bundles/${PACKAGE}-static.umd.js
+    UMD_UPGRADE_ES5_PATH=${DESTDIR}/bundles/${PACKAGE}-upgrade.umd.js
+    UMD_ES5_MIN_PATH=${DESTDIR}/bundles/${PACKAGE}.umd.min.js
+    UMD_STATIC_ES5_MIN_PATH=${DESTDIR}/bundles/${PACKAGE}-static.umd.min.js
+    UMD_UPGRADE_ES5_MIN_PATH=${DESTDIR}/bundles/${PACKAGE}-upgrade.umd.min.js
 
-  if [[ -e ${SRCDIR}/tsconfig-2015.json ]]; then
-    echo "======      COMPILING ESM: ${TSC} -p ${SRCDIR}/tsconfig-2015.json"
-    ${TSC} -p ${SRCDIR}/tsconfig-2015.json
-  fi
+    if [[ ${PACKAGE} != router ]]; then
+      LICENSE_BANNER=${PWD}/modules/@angular/license-banner.txt
+    fi
+    if [[ ${PACKAGE} == router ]]; then
+      LICENSE_BANNER=${PWD}/modules/@angular/router-license-banner.txt
+    fi
 
-  echo "======      TSC 1.8 d.ts compat for ${DESTDIR}   ====="
-  # safely strips 'readonly' specifier from d.ts files to make them compatible with tsc 1.8
-  if [ "$(uname)" == "Darwin" ]; then
-    find ${DESTDIR} -type f -name '*.d.ts' -print0 | xargs -0 sed -i '' -e 's/\(^ *(static |private )*\)*readonly  */\1/g'
-    find ${DESTDIR} -type f -name '*.d.ts' -print0 | xargs -0 sed -i '' -e 's/\/\/\/ <reference types="node" \/>//g'
-    find ${DESTDIR} -type f -name '*.d.ts' -print0 | xargs -0 sed -i '' -E 's/^( +)abstract ([[:alnum:]]+\:)/\1\2/g'
-  else
-    find ${DESTDIR} -type f -name '*.d.ts' -print0 | xargs -0 sed -i -e 's/\(^ *(static |private )*\)*readonly  */\1/g'
-    find ${DESTDIR} -type f -name '*.d.ts' -print0 | xargs -0 sed -i -e 's/\/\/\/ <reference types="node" \/>//g'
-    find ${DESTDIR} -type f -name '*.d.ts' -print0 | xargs -0 sed -i -E 's/^( +)abstract ([[:alnum:]]+\:)/\1\2/g'
-  fi
+    echo "======      TSC 1.8 d.ts compat for ${DESTDIR}   ====="
+    # safely strips 'readonly' specifier from d.ts files to make them compatible with tsc 1.8
+    if [ "$(uname)" == "Darwin" ]; then
+      find ${DESTDIR} -type f -name '*.d.ts' -print0 | xargs -0 sed -i '' -e 's/\(^ *(static |private )*\)*readonly  */\1/g'
+      find ${DESTDIR} -type f -name '*.d.ts' -print0 | xargs -0 sed -i '' -e 's/\/\/\/ <reference types="node" \/>//g'
+      find ${DESTDIR} -type f -name '*.d.ts' -print0 | xargs -0 sed -i '' -E 's/^( +)abstract ([[:alnum:]]+\:)/\1\2/g'
+    else
+      find ${DESTDIR} -type f -name '*.d.ts' -print0 | xargs -0 sed -i -e 's/\(^ *(static |private )*\)*readonly  */\1/g'
+      find ${DESTDIR} -type f -name '*.d.ts' -print0 | xargs -0 sed -i -e 's/\/\/\/ <reference types="node" \/>//g'
+      find ${DESTDIR} -type f -name '*.d.ts' -print0 | xargs -0 sed -i -E 's/^( +)abstract ([[:alnum:]]+\:)/\1\2/g'
+    fi
 
-  if [[ ${PACKAGE} == benchpress ]]; then
-    cp ${SRCDIR}/*.md ${DESTDIR}
-    cp -r ${SRCDIR}/docs ${DESTDIR}
-  fi
+    if [[ ${PACKAGE} == benchpress ]]; then
+      cp ${SRCDIR}/*.md ${DESTDIR}
+      cp -r ${SRCDIR}/docs ${DESTDIR}
+    fi
 
-  if [[ ${BUNDLE} == true && ${PACKAGE} != compiler-cli && ${PACKAGE} != benchpress ]]; then
+    if [[ ${ISCLOSURE} == false && ${BUNDLE} == true && ${PACKAGE} != compiler-cli && ${PACKAGE} != benchpress ]]; then
 
-    echo "======      BUNDLING: ${SRCDIR} ====="
-    mkdir ${DESTDIR}/bundles
+      echo "======      BUNDLING: ${SRCDIR} ====="
+      mkdir ${DESTDIR}/bundles
+
+      (
+        cd  ${SRCDIR}
+        echo "======         Rollup ${PACKAGE} index"
+        ../../../node_modules/.bin/rollup -c rollup.config.js
+        cat ${LICENSE_BANNER} > ${UMD_ES5_PATH}.tmp
+        cat ${UMD_ES5_PATH} >> ${UMD_ES5_PATH}.tmp
+        mv ${UMD_ES5_PATH}.tmp ${UMD_ES5_PATH}
+        $UGLIFYJS -c --screw-ie8 --comments -o ${UMD_ES5_MIN_PATH} ${UMD_ES5_PATH}
+
+        if [[ -e rollup-testing.config.js ]]; then
+          echo "======         Rollup ${PACKAGE} testing"
+          ../../../node_modules/.bin/rollup -c rollup-testing.config.js
+          echo "{\"main\": \"../bundles/${PACKAGE}-testing.umd.js\"}" > ${DESTDIR}/testing/package.json
+          cat ${LICENSE_BANNER} > ${UMD_TESTING_ES5_PATH}.tmp
+          cat ${UMD_TESTING_ES5_PATH} >> ${UMD_TESTING_ES5_PATH}.tmp
+          mv ${UMD_TESTING_ES5_PATH}.tmp ${UMD_TESTING_ES5_PATH}
+        fi
+
+        if [[ -e rollup-static.config.js ]]; then
+          echo "======         Rollup ${PACKAGE} static"
+          ../../../node_modules/.bin/rollup -c rollup-static.config.js
+          # create dir because it doesn't exist yet, we should move the src code here and remove this line
+          mkdir ${DESTDIR}/static
+          echo "{\"main\": \"../bundles/${PACKAGE}-static.umd.js\"}" > ${DESTDIR}/static/package.json
+          cat ${LICENSE_BANNER} > ${UMD_STATIC_ES5_PATH}.tmp
+          cat ${UMD_STATIC_ES5_PATH} >> ${UMD_STATIC_ES5_PATH}.tmp
+          mv ${UMD_STATIC_ES5_PATH}.tmp ${UMD_STATIC_ES5_PATH}
+          $UGLIFYJS -c --screw-ie8 --comments -o ${UMD_STATIC_ES5_MIN_PATH} ${UMD_STATIC_ES5_PATH}
+        fi
+
+        if [[ -e rollup-upgrade.config.js ]]; then
+          echo "======         Rollup ${PACKAGE} upgrade"
+          ../../../node_modules/.bin/rollup -c rollup-upgrade.config.js
+          # create dir because it doesn't exist yet, we should move the src code here and remove this line
+          mkdir ${DESTDIR}/upgrade
+          echo "{\"main\": \"../bundles/${PACKAGE}-upgrade.umd.js\"}" > ${DESTDIR}/upgrade/package.json
+          cat ${LICENSE_BANNER} > ${UMD_UPGRADE_ES5_PATH}.tmp
+          cat ${UMD_UPGRADE_ES5_PATH} >> ${UMD_UPGRADE_ES5_PATH}.tmp
+          mv ${UMD_UPGRADE_ES5_PATH}.tmp ${UMD_UPGRADE_ES5_PATH}
+          $UGLIFYJS -c --screw-ie8 --comments -o ${UMD_UPGRADE_ES5_MIN_PATH} ${UMD_UPGRADE_ES5_PATH}
+        fi
+      ) 2>&1 | grep -v "as external dependency"
+    fi
 
     (
-      cd  ${SRCDIR}
-      echo "======         Rollup ${PACKAGE} index"
-      ../../../node_modules/.bin/rollup -c rollup.config.js
-      cat ${LICENSE_BANNER} > ${UMD_ES5_PATH}.tmp
-      cat ${UMD_ES5_PATH} >> ${UMD_ES5_PATH}.tmp
-      mv ${UMD_ES5_PATH}.tmp ${UMD_ES5_PATH}
-      $UGLIFYJS -c --screw-ie8 --comments -o ${UMD_ES5_MIN_PATH} ${UMD_ES5_PATH}
-
-      if [[ -e rollup-testing.config.js ]]; then
-        echo "======         Rollup ${PACKAGE} testing"
-        ../../../node_modules/.bin/rollup -c rollup-testing.config.js
-        echo "{\"main\": \"../bundles/${PACKAGE}-testing.umd.js\"}" > ${DESTDIR}/testing/package.json
-        cat ${LICENSE_BANNER} > ${UMD_TESTING_ES5_PATH}.tmp
-        cat ${UMD_TESTING_ES5_PATH} >> ${UMD_TESTING_ES5_PATH}.tmp
-        mv ${UMD_TESTING_ES5_PATH}.tmp ${UMD_TESTING_ES5_PATH}
-      fi
-
-      if [[ -e rollup-static.config.js ]]; then
-        echo "======         Rollup ${PACKAGE} static"
-        ../../../node_modules/.bin/rollup -c rollup-static.config.js
-        # create dir because it doesn't exist yet, we should move the src code here and remove this line
-        mkdir ${DESTDIR}/static
-        echo "{\"main\": \"../bundles/${PACKAGE}-static.umd.js\"}" > ${DESTDIR}/static/package.json
-        cat ${LICENSE_BANNER} > ${UMD_STATIC_ES5_PATH}.tmp
-        cat ${UMD_STATIC_ES5_PATH} >> ${UMD_STATIC_ES5_PATH}.tmp
-        mv ${UMD_STATIC_ES5_PATH}.tmp ${UMD_STATIC_ES5_PATH}
-        $UGLIFYJS -c --screw-ie8 --comments -o ${UMD_STATIC_ES5_MIN_PATH} ${UMD_STATIC_ES5_PATH}
-      fi
-
-      if [[ -e rollup-upgrade.config.js ]]; then
-        echo "======         Rollup ${PACKAGE} upgrade"
-        ../../../node_modules/.bin/rollup -c rollup-upgrade.config.js
-        # create dir because it doesn't exist yet, we should move the src code here and remove this line
-        mkdir ${DESTDIR}/upgrade
-        echo "{\"main\": \"../bundles/${PACKAGE}-upgrade.umd.js\"}" > ${DESTDIR}/upgrade/package.json
-        cat ${LICENSE_BANNER} > ${UMD_UPGRADE_ES5_PATH}.tmp
-        cat ${UMD_UPGRADE_ES5_PATH} >> ${UMD_UPGRADE_ES5_PATH}.tmp
-        mv ${UMD_UPGRADE_ES5_PATH}.tmp ${UMD_UPGRADE_ES5_PATH}
-        $UGLIFYJS -c --screw-ie8 --comments -o ${UMD_UPGRADE_ES5_MIN_PATH} ${UMD_UPGRADE_ES5_PATH}
-      fi
-    ) 2>&1 | grep -v "as external dependency"
-  fi
-  
-  (
-    echo "======      VERSION: Updating version references"
-    cd ${DESTDIR}
-    echo "======       EXECUTE: perl -p -i -e \"s/0\.0\.0\-PLACEHOLDER/${VERSION}/g\" $""(grep -ril 0\.0\.0\-PLACEHOLDER .)"
-    perl -p -i -e "s/0\.0\.0\-PLACEHOLDER/${VERSION}/g" $(grep -ril 0\.0\.0\-PLACEHOLDER .) < /dev/null 2> /dev/null
-    echo "======       EXECUTE: perl -p -i -e \"s/0\.0\.0\-ROUTERPLACEHOLDER/${ROUTER_VERSION}/g\" $""(grep -ril 0\.0\.0\-ROUTERPLACEHOLDER .)"
-    perl -p -i -e "s/0\.0\.0\-ROUTERPLACEHOLDER/${ROUTER_VERSION}/g" $(grep -ril 0\.0\.0\-ROUTERPLACEHOLDER .) < /dev/null 2> /dev/null
-  )
+      echo "======      VERSION: Updating version references"
+      cd ${DESTDIR}
+      echo "======       EXECUTE: perl -p -i -e \"s/0\.0\.0\-PLACEHOLDER/${VERSION}/g\" $""(grep -ril 0\.0\.0\-PLACEHOLDER .)"
+      perl -p -i -e "s/0\.0\.0\-PLACEHOLDER/${VERSION}/g" $(grep -ril 0\.0\.0\-PLACEHOLDER .) < /dev/null 2> /dev/null
+      echo "======       EXECUTE: perl -p -i -e \"s/0\.0\.0\-ROUTERPLACEHOLDER/${ROUTER_VERSION}/g\" $""(grep -ril 0\.0\.0\-ROUTERPLACEHOLDER .)"
+      perl -p -i -e "s/0\.0\.0\-ROUTERPLACEHOLDER/${ROUTER_VERSION}/g" $(grep -ril 0\.0\.0\-ROUTERPLACEHOLDER .) < /dev/null 2> /dev/null
+    )
+    if [[ ${ISCLOSURE} == false ]]; then
+      ISCLOSURE=true
+    else
+      ISCLOSURE=false
+    fi
+  done
 done
 
 echo ""

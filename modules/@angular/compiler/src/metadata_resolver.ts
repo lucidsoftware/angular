@@ -778,7 +778,7 @@ export class CompileMetadataResolver {
       } else {
         provider = resolveForwardRef(provider);
         let providerMeta: cpl.ProviderMeta;
-        if (provider && typeof provider == 'object' && provider.hasOwnProperty('provide')) {
+        if (provider && typeof provider == 'object' && !!provider.provide) {
           providerMeta = new cpl.ProviderMeta(provider.provide, provider);
         } else if (isValidType(provider)) {
           providerMeta = new cpl.ProviderMeta(provider, {useClass: provider});

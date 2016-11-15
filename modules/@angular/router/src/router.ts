@@ -436,7 +436,7 @@ export class Router {
    * // create /team/33;expand=true/user/11
    * router.createUrlTree(['/team', 33, {expand: true}, 'user', 11]);
    *
-   * // you can collapse static segments like this (this works only with the first passed-in value):
+   * // you can collapse (static) segments like this (this works only with the first passed-in value):
    * router.createUrlTree(['/team/33/user', userId]);
    *
    * // If the first segment can contain slashes, and you do not want the router to split it, you

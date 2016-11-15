@@ -39,7 +39,8 @@ describe('CompilerHost', () => {
           skipMetadataEmit: false,
           strictMetadataEmit: false,
           skipTemplateCodegen: false,
-          trace: false
+          trace: false,
+          googleClosureOutput: false,
         },
         context);
     hostSiblingGenDir = new CompilerHost(
@@ -49,7 +50,8 @@ describe('CompilerHost', () => {
           skipMetadataEmit: false,
           strictMetadataEmit: false,
           skipTemplateCodegen: false,
-          trace: false
+          trace: false,
+          googleClosureOutput: false,
         },
         context);
   });

@@ -20,7 +20,7 @@ import {URLSearchParams} from './url_search_params';
  *
  * The Request's interface is inspired by the Request constructor defined in the [Fetch
  * Spec](https://fetch.spec.whatwg.org/#request-class),
- * but is considered a static value whose body can be accessed many times. There are other
+ * but is considered a (static) value whose body can be accessed many times. There are other
  * differences in the implementation, but this is the most significant.
  *
  * `Request` instances are typically created by higher-level classes, like {@link Http} and

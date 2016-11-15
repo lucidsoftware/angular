@@ -72,7 +72,7 @@ export function main(
 
       if (ngOptions.annotationsAs !== 'decorators') {
         if (diagnostics) console.time('NG downlevel');
-        const downlevelHost = new DecoratorDownlevelCompilerHost(preprocessHost, programForJsEmit);
+        const downlevelHost = new DecoratorDownlevelCompilerHost(preprocessHost, programForJsEmit, ngOptions);
         // A program can be re-used only once; save the programWithCodegen to be reused by
         // metadataWriter
         programForJsEmit = createProgram(downlevelHost);
