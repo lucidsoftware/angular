@@ -40,7 +40,8 @@ describe('reflector_host', () => {
           skipMetadataEmit: false,
           strictMetadataEmit: false,
           skipTemplateCodegen: false,
-          trace: false
+          trace: false,
+          googleClosureOutput: false
         },
         context);
     reflectorSiblingGenDir = new ReflectorHost(
@@ -50,7 +51,8 @@ describe('reflector_host', () => {
           skipMetadataEmit: false,
           strictMetadataEmit: false,
           skipTemplateCodegen: false,
-          trace: false
+          trace: false,
+          googleClosureOutput: false
         },
         context);
   });

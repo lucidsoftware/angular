@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "declaration": true,
+    "stripInternal": true,
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "../../../dist/packages-closure/http",
+    "paths": {
+      "@angular/core": ["../../../dist/packages-closure/core"],
+      "@angular/http": ["../../../dist/packages-closure/http"],
+      "rxjs/*": ["../../../node_modules/rxjs/*"]
+    },
+    "rootDir": ".",
+    "sourceMap": true,
+    "inlineSources": true,
+    "lib": ["es6", "dom"],
+    "target": "es2015",
+    "skipLibCheck": true
+  },
+  "files": [
+    "testing/index.ts"
+  ],
+  "angularCompilerOptions": {
+    "strictMetadataEmit": true,
+    "googleClosureOutput": true
+  }
+}

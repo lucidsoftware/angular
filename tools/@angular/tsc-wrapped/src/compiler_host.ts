@@ -7,10 +7,12 @@
  */
 
 import {writeFileSync} from 'fs';
-import {convertDecorators} from 'tsickle';
+import * as path from 'path';
+import * as tsickle from 'tsickle';
 import * as ts from 'typescript';
-
 import NgOptions from './options';
+import {check, tsc} from './tsc';
+
 import {MetadataCollector} from './collector';
 
 
@@ -50,16 +52,54 @@ interface DecoratorInvocation {
   args?: any[];
 }
 `;
-  constructor(delegate: ts.CompilerHost, private program: ts.Program) { super(delegate); }
+  constructor(delegate: ts.CompilerHost, private program: ts.Program,
+    private ngOptions: NgOptions) {
+    super(delegate);
+
+    let tsickleOutput = new Map<string, string>();
+    if (ngOptions.googleClosureOutput) {
+      for (let file of program.getSourceFiles()) {
+        let fileName = file.fileName;
+        if (!/\.d\.ts$/.test(fileName)) {
+          let {output, externs, diagnostics} =
+              tsickle.annotate(program, program.getSourceFile(fileName), {untyped:true});
+          check(diagnostics);
+          tsickleOutput.set(ts.sys.resolvePath(fileName), output);
+        }
+      }
+    }
+
+    this.subsitutingHost = this.createSourceReplacingCompilerHost(tsickleOutput);
+    this.substituteProgram = ts.createProgram(
+      program.getRootFileNames(),
+      program.getCompilerOptions(),
+      this.subsitutingHost,
+      program
+    );
+    try{
+      tsc.typeCheck(this.subsitutingHost, this.substituteProgram);
+    } catch(e) {}
+  }
+
+  private subsitutingHost: ts.CompilerHost;
+  private substituteProgram: ts.Program;
 
   getSourceFile =
       (fileName: string, languageVersion: ts.ScriptTarget, onError?: (message: string) => void) => {
         const originalContent = this.delegate.readFile(fileName);
         let newContent = originalContent;
-        if (!/\.d\.ts$/.test(fileName)) {
+
+        if (/\.d\.ts$/.test(fileName)) {
+          return ts.createSourceFile(fileName, originalContent, languageVersion, true);
+        } else {
           try {
-            const converted = convertDecorators(
-                this.program.getTypeChecker(), this.program.getSourceFile(fileName));
+            let program: ts.Program;
+            if (this.ngOptions.googleClosureOutput) {
+              program = this.substituteProgram;
+            } else {
+              program = this.program;
+            }
+            const converted = tsickle.convertDecorators(program.getTypeChecker(), program.getSourceFile(fileName));
             if (converted.diagnostics) {
               this.diagnostics.push(...converted.diagnostics);
             }
@@ -68,8 +108,75 @@ interface DecoratorInvocation {
             console.error('Cannot convertDecorators on file', fileName);
             throw e;
           }
+
+          return ts.createSourceFile(fileName, newContent, languageVersion, true);
         }
-        return ts.createSourceFile(fileName, newContent, languageVersion, true);
+      };
+
+  createSourceReplacingCompilerHost = (substituteSource: Map<string, string>): ts.CompilerHost => {
+    let getSourceFile = (
+        fileName: string, languageVersion: ts.ScriptTarget,
+        onError?: (message: string) => void): ts.SourceFile => {
+      if (substituteSource.has(fileName)) {
+        return ts.createSourceFile(fileName, substituteSource.get(fileName), languageVersion);
+      }
+      return this.delegate.getSourceFile(fileName, languageVersion, onError);
+    }
+
+    return {
+      getSourceFile: getSourceFile,
+      getDirectories: this.getDirectories,
+      getCancellationToken: this.getCancellationToken,
+      getDefaultLibFileName: this.getDefaultLibFileName,
+      writeFile: this.writeFile,
+      getCurrentDirectory: this.getCurrentDirectory,
+      getCanonicalFileName: this.getCanonicalFileName,
+      useCaseSensitiveFileNames: this.useCaseSensitiveFileNames,
+      getNewLine: this.getNewLine,
+      fileExists: this.fileExists,
+      readFile: this.readFile,
+      directoryExists: this.directoryExists,
+    };
+  }
+
+  /**
+   * Massages file names into valid goog.module names:
+   * - resolves relative paths to the given context
+   * - replace resolved module path with module name
+   * - replaces '/' with '$' to have a flat name.
+   * - replace first char if non-alpha
+   * - replace subsequent non-alpha numeric chars
+   */
+  static pathToGoogModuleName(context:string, importPath:string) {
+    importPath = importPath.replace(/\.js$/, '');
+    if (importPath[0] == '.') {
+      // './foo' or '../foo'.
+      // Resolve the path against the dirname of the current module.
+      importPath = path.join(path.dirname(context), importPath);
+    }
+    const dist = /dist\/packages-closure\/([^\/]+)\/(.*)/;
+    if (dist.test(importPath)) {
+      importPath = importPath.replace(dist, (match:string, pkg:string, impt:string) => {
+        return `@angular/${pkg}/${impt}`;
+      }).replace(/\/index$/, '');
+    }
+    // Replace characters not supported by goog.module.
+    let moduleName = importPath.replace(/\//g, '.')
+      .replace(/^[^a-zA-Z_$]/, '_')
+      .replace(/[^a-zA-Z0-9._$]/g, '_');
+    return moduleName;
+  }
+
+  writeFile: ts.WriteFileCallback =
+      (fileName: string, data: string, writeByteOrderMark: boolean,
+       onError?: (message: string) => void, sourceFiles?: ts.SourceFile[]) => {
+        let toWrite = data;
+        if (/\.js$/.test(fileName) && this.ngOptions.googleClosureOutput) {
+          const {output, referencedModules} = tsickle.convertCommonJsToGoogModule(
+            path.relative(this.delegate.getCurrentDirectory(), fileName), data, TsickleHost.pathToGoogModuleName);
+          toWrite = output;
+        }
+        return this.delegate.writeFile(fileName, toWrite, writeByteOrderMark, onError, sourceFiles);
       };
 }
 

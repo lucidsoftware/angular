@@ -34,6 +34,9 @@ interface Options extends ts.CompilerOptions {
 
   // Whether to embed debug information in the compiled templates
   debug?: boolean;
+
+  // Translate outputs to ES6 that is valid input to closure compiler
+  googleClosureOutput: boolean;
 }
 
 export default Options;

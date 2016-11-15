@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "declaration": true,
+    "stripInternal": true,
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "../../../dist/packages-closure/platform-server/",
+    "paths": {
+      "@angular/core": ["../../../dist/packages-closure/core/"],
+      "@angular/core/testing": ["../../../dist/packages-closure/core/testing"],
+      "@angular/common": ["../../../dist/packages-closure/common/"],
+      "@angular/common/testing": ["../../../dist/packages-closure/common/testing"],
+      "@angular/compiler": ["../../../dist/packages-closure/compiler/"],
+      "@angular/compiler/testing": ["../../../dist/packages-closure/compiler/testing"],
+      "@angular/platform-browser": ["../../../dist/packages-closure/platform-browser/"],
+      "@angular/platform-browser/testing": ["../../../dist/packages-closure/platform-browser/testing"],
+      "@angular/platform-browser-dynamic": ["../../../dist/packages-closure/platform-browser-dynamic"],
+      "@angular/platform-browser-dynamic/testing": ["../../../dist/packages-closure/platform-browser-dynamic/testing"],
+      "@angular/platform-server": ["../../../dist/packages-closure/platform-server"]
+    },
+    "rootDir": ".",
+    "sourceMap": true,
+    "inlineSources": true,
+    "lib": ["es6", "dom"],
+    "target": "es2015",
+    "skipLibCheck": true
+  },
+  "files": [
+    "testing/index.ts",
+    "../../../node_modules/@types/jasmine/index.d.ts",
+    "../../../node_modules/@types/node/index.d.ts",
+    "../../../node_modules/zone.js/dist/zone.js.d.ts"
+  ],
+  "angularCompilerOptions": {
+    "strictMetadataEmit": true,
+    "googleClosureOutput": true
+  }
+}

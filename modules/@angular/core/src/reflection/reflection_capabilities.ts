@@ -55,6 +55,15 @@ export class ReflectionCapabilities implements PlatformReflectionCapabilities {
       return (<any>type).parameters;
     }
 
+    // API for metadata created by invoking the decorators.
+    if (isPresent(this._reflect) && isPresent(this._reflect.getMetadata)) {
+      const paramAnnotations = this._reflect.getMetadata('parameters', type);
+      const paramTypes = this._reflect.getMetadata('design:paramtypes', type);
+      if (paramTypes || paramAnnotations) {
+        return this._zipTypesAndAnnotations(paramTypes, paramAnnotations);
+      }
+    }
+
     // API of tsickle for lowering decorators to properties on the class.
     const tsickleCtorParams = (<any>type).ctorParameters;
     if (tsickleCtorParams) {
@@ -69,14 +78,6 @@ export class ReflectionCapabilities implements PlatformReflectionCapabilities {
       return this._zipTypesAndAnnotations(paramTypes, paramAnnotations);
     }
 
-    // API for metadata created by invoking the decorators.
-    if (isPresent(this._reflect) && isPresent(this._reflect.getMetadata)) {
-      const paramAnnotations = this._reflect.getMetadata('parameters', type);
-      const paramTypes = this._reflect.getMetadata('design:paramtypes', type);
-      if (paramTypes || paramAnnotations) {
-        return this._zipTypesAndAnnotations(paramTypes, paramAnnotations);
-      }
-    }
     // The array has to be filled with `undefined` because holes would be skipped by `some`
     return new Array((<any>type.length)).fill(undefined);
   }
@@ -91,16 +92,17 @@ export class ReflectionCapabilities implements PlatformReflectionCapabilities {
       return annotations;
     }
 
-    // API of tsickle for lowering decorators to properties on the class.
-    if ((<any>typeOrFunc).decorators) {
-      return convertTsickleDecoratorIntoMetadata((<any>typeOrFunc).decorators);
-    }
-
     // API for metadata created by invoking the decorators.
     if (this._reflect && this._reflect.getMetadata) {
       const annotations = this._reflect.getMetadata('annotations', typeOrFunc);
       if (annotations) return annotations;
     }
+
+    // API of tsickle for lowering decorators to properties on the class.
+    if ((<any>typeOrFunc).decorators) {
+      return convertTsickleDecoratorIntoMetadata((<any>typeOrFunc).decorators);
+    }
+
     return [];
   }
 
@@ -114,6 +116,12 @@ export class ReflectionCapabilities implements PlatformReflectionCapabilities {
       return propMetadata;
     }
 
+    // API for metadata created by invoking the decorators.
+    if (this._reflect && this._reflect.getMetadata) {
+      const propMetadata = this._reflect.getMetadata('propMetadata', typeOrFunc);
+      if (propMetadata) return propMetadata;
+    }
+
     // API of tsickle for lowering decorators to properties on the class.
     if ((<any>typeOrFunc).propDecorators) {
       const propDecorators = (<any>typeOrFunc).propDecorators;
@@ -124,11 +132,6 @@ export class ReflectionCapabilities implements PlatformReflectionCapabilities {
       return propMetadata;
     }
 
-    // API for metadata created by invoking the decorators.
-    if (this._reflect && this._reflect.getMetadata) {
-      const propMetadata = this._reflect.getMetadata('propMetadata', typeOrFunc);
-      if (propMetadata) return propMetadata;
-    }
     return {};
   }
 

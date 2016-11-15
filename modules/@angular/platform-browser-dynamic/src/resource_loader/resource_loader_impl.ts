@@ -12,6 +12,10 @@ import {isPresent} from '../facade/lang';
 
 @Injectable()
 export class ResourceLoaderImpl extends ResourceLoader {
+  constructor() {
+    super();
+  }
+
   get(url: string): Promise<string> {
     let resolve: (result: any) => void;
     let reject: (error: any) => void;
