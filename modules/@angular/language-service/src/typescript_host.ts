@@ -383,7 +383,7 @@ export class TypeScriptServiceHost implements LanguageServiceHost {
       const basePath = path.dirname(tsConfigPath || this.context);
 
       result = this._reflectorHost = new ReflectorHost(
-          () => this.tsService.getProgram(), this.host, {basePath, genDir: basePath});
+          () => this.tsService.getProgram(), this.host, {basePath, genDir: basePath, googleClosureOutput: false});
     }
     return result;
   }

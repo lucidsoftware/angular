@@ -10,6 +10,7 @@ import * as ts from 'typescript';
 import NgOptions from '../src/options';
 import {formatDiagnostics, TsickleCompilerHost} from '../src/compiler_host';
 import {writeTempFile} from './test_support';
+import {DecoratorDownlevelCompilerHost} from '../src/compiler_host';
 
 describe('Compiler Host', () => {
   function makeProgram(fileName: string, source: string): [ts.Program, ts.CompilerHost, NgOptions] {
@@ -20,6 +21,7 @@ describe('Compiler Host', () => {
       genDir: '/tmp',
       basePath: '/tmp',
       noEmit: true,
+      googleClosureOutput: false,
     };
 
     // TsickleCompilerHost wants a ts.Program, which is the result of
@@ -47,5 +49,13 @@ describe('Compiler Host', () => {
     const tsickleHost = new TsickleCompilerHost(host, program, opts);
     const f = tsickleHost.getSourceFile(program.getRootFileNames()[0], ts.ScriptTarget.ES5);
     expect(formatDiagnostics(tsickleHost.diagnostics)).toContain('redundant with TypeScript types');
+  });
+
+  it('should convert paths to goog.module names', () => {
+    expect(DecoratorDownlevelCompilerHost.pathToGoogModuleName("some-file.ts", "dist/packages-dist/core/esm/place/testing")).toEqual("_angular$core$place$testing");
+    expect(DecoratorDownlevelCompilerHost.pathToGoogModuleName("some-file.ts", "dist/packages-dist/core/esm/place/index")).toEqual("_angular$core$place");
+    expect(DecoratorDownlevelCompilerHost.pathToGoogModuleName("some-file.ts", "dist/es6/AsyncSubject")).toEqual("rxjs$AsyncSubject");
+    expect(DecoratorDownlevelCompilerHost.pathToGoogModuleName("some-file.ts", "./other_file")).toEqual("other__file");
+    expect(DecoratorDownlevelCompilerHost.pathToGoogModuleName("", "./other_file")).toEqual("other__file");
   });
 });

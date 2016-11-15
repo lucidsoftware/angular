@@ -68,7 +68,12 @@ export function formatDiagnostics(diags: ts.Diagnostic[]): string {
 
 export function check(diags: ts.Diagnostic[]) {
   if (diags && diags.length && diags[0]) {
-    throw new UserError(formatDiagnostics(diags));
+    const diagnostics = formatDiagnostics(diags);
+    if (!/\bWarning\b/g.test(diagnostics)) {
+      throw new UserError(diagnostics);
+    } else {
+      console.error(diagnostics);
+    }
   }
 }
 

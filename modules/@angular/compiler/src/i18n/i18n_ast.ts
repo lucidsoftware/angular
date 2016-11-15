@@ -11,7 +11,7 @@ import {ParseSourceSpan} from '../parse_util';
 export class Message {
   /**
    * @param nodes message AST
-   * @param placeholders maps placeholder names to static content
+   * @param placeholders maps placeholder names to (static) content
    * @param placeholderToMessage maps placeholder names to messages (used for nested ICU messages)
    * @param meaning
    * @param description
