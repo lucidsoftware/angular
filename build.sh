@@ -17,7 +17,6 @@ PACKAGES=(core
   upgrade
   router
   compiler-cli
-  language-service
   benchpress)
 BUILD_ALL=true
 BUNDLE=true
