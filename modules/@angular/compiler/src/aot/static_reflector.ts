@@ -27,7 +27,7 @@ const ANGULAR_IMPORT_LOCATIONS = {
 const HIDDEN_KEY = /^\$.*\$$/;
 
 /**
- * A static reflector implements enough of the Reflector API that is necessary to compile
+ * A (static) reflector implements enough of the Reflector API that is necessary to compile
  * templates statically.
  */
 export class StaticReflector implements ReflectorReader {
