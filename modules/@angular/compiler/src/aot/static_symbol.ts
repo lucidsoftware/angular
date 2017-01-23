@@ -7,7 +7,7 @@
  */
 
 /**
- * A token representing the a reference to a static type.
+ * A token representing the a reference to a (static) type.
  *
  * This token is unique for a filePath and name and can be used as a hash table key.
  */
@@ -16,7 +16,7 @@ export class StaticSymbol {
 }
 
 /**
- * A cache of static symbol used by the StaticReflector to return the same symbol for the
+ * A cache of (static) symbol used by the StaticReflector to return the same symbol for the
  * same symbol values.
  */
 export class StaticSymbolCache {
