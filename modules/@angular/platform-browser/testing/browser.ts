@@ -27,6 +27,8 @@ const _TEST_BROWSER_PLATFORM_PROVIDERS: Provider[] =
 export const platformBrowserTesting =
     createPlatformFactory(platformCore, 'browserTesting', _TEST_BROWSER_PLATFORM_PROVIDERS);
 
+export function AnimationDriverNoOpFactory(): AnimationDriver { return AnimationDriver.NOOP; }
+
 /**
  * NgModule for testing.
  *
@@ -37,7 +39,7 @@ export const platformBrowserTesting =
   providers: [
     {provide: APP_ID, useValue: 'a'}, ELEMENT_PROBE_PROVIDERS,
     {provide: NgZone, useFactory: createNgZone},
-    {provide: AnimationDriver, useValue: AnimationDriver.NOOP}
+    {provide: AnimationDriver, useFactory: AnimationDriverNoOpFactory}
   ]
 })
 export class BrowserTestingModule {
