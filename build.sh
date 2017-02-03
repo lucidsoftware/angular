@@ -135,7 +135,8 @@ do
   # ES2015 distro is not ready yet; don't slow down all builds for it
   # TODO(alexeagle,igorminar): figure out ES2015 story and enable
   if [[ -n "${EXPERIMENTAL_ES2015_DISTRO}" ]]; then
-    $TSC -p ${SRCDIR}/tsconfig-build.json --target es2015 --outDir ${ES2015_DESTDIR}
+    sed -e 's/"target":\s*"es5"/"target": "es2015"/' -e 's/"outDir":\s*"\(.*\)\/packages-dist\/\(.*\)"/"outDir": "\1\/packages-dist-es2015\/\2"/' ${SRCDIR}/tsconfig-build.json > ${SRCDIR}/tsconfig-build-es2015.json
+    $TSC -p ${SRCDIR}/tsconfig-build-es2015.json
     cp ${SRCDIR}/package.json ${ES2015_DESTDIR}/
     cp ${PWD}/modules/@angular/README.md ${ES2015_DESTDIR}/
   fi
