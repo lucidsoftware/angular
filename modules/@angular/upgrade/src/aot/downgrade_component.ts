@@ -106,6 +106,6 @@ export function downgradeComponent(info: /* ComponentInfo */ {
     };
   };
 
-  directiveFactory.$inject = [$INJECTOR, $PARSE];
+  directiveFactory['$inject'] = [$INJECTOR, $PARSE];
   return directiveFactory;
 }
