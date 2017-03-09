@@ -81,7 +81,7 @@ export function downgradeComponent(info: /* ComponentInfo */ {
       link: (scope: angular.IScope, element: angular.IAugmentedJQuery, attrs: angular.IAttributes,
              parentInjector: Injector, transclude: angular.ITranscludeFunction) => {
 
-        if (parentInjector === null) {
+        if (parentInjector == null) {
           parentInjector = $injector.get(INJECTOR_KEY);
         }
 
@@ -106,6 +106,6 @@ export function downgradeComponent(info: /* ComponentInfo */ {
     };
   };
 
-  directiveFactory.$inject = [$INJECTOR, $PARSE];
+  directiveFactory['$inject'] = [$INJECTOR, $PARSE];
   return directiveFactory;
 }
