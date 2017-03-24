@@ -174,7 +174,7 @@ interface DecoratorInvocation {
         if (/\.js$/.test(fileName) && this.ngOptions.googleClosureOutput) {
           const {output, referencedModules} = tsickle.convertCommonJsToGoogModule(
             path.relative(this.delegate.getCurrentDirectory(), fileName), data, TsickleHost.pathToGoogModuleName);
-          toWrite = output;
+          toWrite = "/** @fileoverview @suppress {accessControls,ambiguousFunctionDecl,checkDebuggerStatement,checkRegExp,checkTypes,checkVars,closureDepMethodUsageChecks,constantProperty,const,deprecated,duplicate,es5Strict,externsValidation,extraRequire,fileoverviewTags,globalThis,invalidCasts,misplacedTypeAnnotation,missingProperties,missingProvide,missingRequire,missingReturn,newCheckTypes,nonStandardJsDocs,reportUnknownTypes,strictModuleDepCheck,suspiciousCode,undefinedNames,undefinedVars,unknownDefines,uselessCode,visibility} */\n" + output;
         }
         return this.delegate.writeFile(fileName, toWrite, writeByteOrderMark, onError, sourceFiles);
       };
