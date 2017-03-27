@@ -160,6 +160,12 @@ interface DecoratorInvocation {
         return `@angular/${pkg}/${impt}`;
       }).replace(/\/index$/, '');
     }
+    const lucidCommon = /ngc\/ng2common\/(.*)/;
+    if (lucidCommon.test(importPath)) {
+      importPath = importPath.replace(lucidCommon, (match:string, impt:string) => {
+        return `@lucid/common/${impt}`;
+      });
+    }
     // Replace characters not supported by goog.module.
     let moduleName = importPath.replace(/\//g, '.')
       .replace(/^[^a-zA-Z_$]/, '_')
