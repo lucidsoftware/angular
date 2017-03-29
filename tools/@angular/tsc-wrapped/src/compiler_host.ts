@@ -166,6 +166,12 @@ interface DecoratorInvocation {
         return `@lucid/common/${impt}`;
       });
     }
+    const lucidChart = /ngc\/ng2chart\/(.*)/;
+    if (lucidChart.test(importPath)) {
+      importPath = importPath.replace(lucidChart, (match:string, impt:string) => {
+        return `@lucid/chart/${impt}`;
+      });
+    }
     // Replace characters not supported by goog.module.
     let moduleName = importPath.replace(/\//g, '.')
       .replace(/^[^a-zA-Z_$]/, '_')
