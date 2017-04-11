@@ -97,7 +97,8 @@ export class NgTools_InternalApi_NG_2 {
       i18nFile: options.i18nFile !,
       locale: options.locale !,
       missingTranslation: options.missingTranslation !,
-      basePath: options.basePath
+      basePath: options.basePath,
+      googModuleProjectName: null
     };
     const ngOptions = options.angularCompilerOptions;
     if (ngOptions.enableSummariesForJit === undefined) {
