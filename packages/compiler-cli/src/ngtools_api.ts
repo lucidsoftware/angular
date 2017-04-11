@@ -95,7 +95,8 @@ export class NgTools_InternalApi_NG_2 {
       i18nFormat: options.i18nFormat,
       i18nFile: options.i18nFile,
       locale: options.locale,
-      basePath: options.basePath
+      basePath: options.basePath,
+      googModuleProjectName: null
     };
 
     // Create the Code Generator.
