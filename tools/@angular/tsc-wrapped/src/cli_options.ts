@@ -7,7 +7,11 @@
  */
 export class CliOptions {
   public basePath: string;
-  constructor({basePath = null}: {basePath?: string}) { this.basePath = basePath; }
+  public googModuleProjectName: string;
+  constructor({basePath = null, googModuleProjectName = null}: {basePath?: string, googModuleProjectName?: string}) {
+    this.basePath = basePath;
+    this.googModuleProjectName = googModuleProjectName;
+  }
 }
 
 export class I18nExtractionCliOptions extends CliOptions {
@@ -34,14 +38,15 @@ export class NgcCliOptions extends CliOptions {
   public missingTranslation: string;
 
   constructor({i18nFormat = null, i18nFile = null, locale = null, missingTranslation = null,
-               basePath = null}: {
+               basePath = null, googModuleProjectName = null}: {
     i18nFormat?: string,
     i18nFile?: string,
     locale?: string,
     missingTranslation?: string,
-    basePath?: string
+    basePath?: string,
+    googModuleProjectName?: string
   }) {
-    super({basePath: basePath});
+    super({basePath: basePath, googModuleProjectName: googModuleProjectName});
     this.i18nFormat = i18nFormat;
     this.i18nFile = i18nFile;
     this.locale = locale;

@@ -12,6 +12,7 @@
     "../../system.d.ts"
   ],
   "angularCompilerOptions": {
+    "annotateForClosureCompiler": true,
     "strictMetadataEmit": true
   }
 }

@@ -84,6 +84,8 @@ export function main(
 
     // read the configuration options from wherever you store them
     let {parsed, ngOptions} = tsc.readConfiguration(project, basePath, options);
+    const googModuleProjectName = cliOptions.googModuleProjectName || ((parsed.raw.tsickle || {}).googModuleProjectName) || '';
+    const outputProjectName = parsed.options.outDir;
     ngOptions.basePath = basePath;
     let rootFileNames: string[] = parsed.fileNames.slice(0);
     const createProgram = (host: ts.CompilerHost, oldProgram?: ts.Program) => {
@@ -110,12 +112,45 @@ export function main(
       host = bundleHost;
     }
 
-    const tsickleCompilerHostOptions:
-        tsickle.Options = {googmodule: false, untyped: true, convertIndexImportShorthand: true};
+    const tsickleCompilerHostOptions: tsickle.Options = {
+      googmodule: !!googModuleProjectName,
+      untyped: true,
+      convertIndexImportShorthand: true,  // This covers ES6 too
+    };
+    if (tsickleCompilerHostOptions.googmodule) {
+      tsickleCompilerHostOptions.prelude = '/** @fileoverview @suppress {accessControls,ambiguousFunctionDecl,checkDebuggerStatement,checkRegExp,checkTypes,checkVars,closureDepMethodUsageChecks,constantProperty,const,deprecated,duplicate,es5Strict,externsValidation,extraRequire,fileoverviewTags,globalThis,invalidCasts,misplacedTypeAnnotation,missingProperties,missingProvide,missingRequire,missingReturn,newCheckTypes,nonStandardJsDocs,reportUnknownTypes,strictModuleDepCheck,suspiciousCode,undefinedNames,undefinedVars,unknownDefines,uselessCode,visibility} */';
+    }
 
     const tsickleHost: tsickle.TsickleHost = {
       shouldSkipTsickleProcessing: (fileName) => /\.d\.ts$/.test(fileName),
-      pathToModuleName: (context, importPath) => '',
+      pathToModuleName: (context, importPath) => {
+        if (!googModuleProjectName) {
+          return '';
+        }
+        importPath = importPath.replace(/((\/index)?(\.ts|\.d\.ts|\.js|\.jsx|\.tsx)$|\/index$)/, '');
+        const isRelativePath = importPath[0] == '.';
+        if (isRelativePath) {
+          importPath = path.join(path.dirname(context), importPath);
+        }
+        if (context == '' || isRelativePath) {
+          const absolutePath = path.resolve(basePath, importPath);
+          const projectDirectory = projectDir as string;
+          const indexOfProjectDir = absolutePath.indexOf(projectDirectory);
+          const indexOfOutputProjectDir = absolutePath.indexOf(outputProjectName);
+
+          if (indexOfProjectDir > -1) {
+            const relativeToProject = absolutePath.substr(indexOfProjectDir + projectDirectory.length);
+            importPath =`${googModuleProjectName}${relativeToProject}`;
+          }else if (indexOfOutputProjectDir > -1) {
+            const relativeToProject = absolutePath.substr(indexOfOutputProjectDir + outputProjectName.length);
+            importPath =`${googModuleProjectName}${relativeToProject}`;
+          }
+        }
+
+        return importPath.replace(/\//g, '.')
+          .replace(/^[^a-zA-Z_$]/, '_')
+          .replace(/[^a-zA-Z0-9._$]/g, '_');
+      },
       shouldIgnoreWarningsForPath: (filePath) => false,
       fileNameToModuleId: (fileName) => fileName,
     };
@@ -196,7 +231,12 @@ export function main(
 // CLI entry point
 if (require.main === module) {
   const args = process.argv.slice(2);
-  let {options, errors} = (ts as any).parseCommandLine(args);
+  const tsArgs = process.argv.slice(2);
+  const googModuleNameIndex = tsArgs.indexOf('--googModuleProjectName');
+  if (googModuleNameIndex != -1) {
+    tsArgs.splice(googModuleNameIndex, 2);
+  }
+  let {options, errors} = (ts as any).parseCommandLine(tsArgs);
   check(errors);
   const project = options.project || '.';
   // TODO(alexeagle): command line should be TSC-compatible, remove "CliOptions" here
