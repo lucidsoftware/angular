@@ -13,5 +13,8 @@
   "files": [
     "index.ts",
     "../../../node_modules/zone.js/dist/zone.js.d.ts"
-  ]
+  ],
+  "angularCompilerOptions": {
+    "annotateForClosureCompiler": true
+  }
 }

@@ -251,23 +251,29 @@ minify() {
 # Recursively compile package
 # Arguments:
 #   param1 - Source directory
-#   param2 - Out dir
-#   param3 - Package Name
-#   param4 - Is child (are we recursing?)
+#   param2 - Out path
+#   param3 - Out dir
+#   param4 - Package Name
+#   param5 - Is child (are we recursing?)
 # Returns:
 #   None
 #######################################
 compilePackage() {
-  echo "======      [${3}]: COMPILING: ${NGC} -p ${1}/tsconfig-build.json"
+  echo "======      [${4}]: COMPILING: ${NGC} -p ${1}/tsconfig-build.json"
+  echo "======      [${4}]: COMPILING: ${NGC} -p ${1}/tsconfig-build.json --outDir ${2}-closure/${4} --module commonjs --googModuleProjectName @angular/${4}"
+  local package_name=$(basename "${2}/${3}")
+
   # For NODE_PACKAGES items (not getting rolled up)
   if containsElement "${PACKAGE}" "${NODE_PACKAGES[@]}"; then
     $TSC -p ${1}/tsconfig-build.json
+    $TSC -p ${1}/tsconfig-build.json --noEmitHelpers --outDir ${2}-closure/${4} --module commonjs
   else
-    local package_name=$(basename "${2}")
     $NGC -p ${1}/tsconfig-build.json
     echo "======           Create ${1}/../${package_name}.d.ts re-export file for Closure"
-    echo "$(cat ${LICENSE_BANNER}) ${N} export * from './${package_name}/index'" > ${2}/../${package_name}.d.ts
-    echo "{\"__symbolic\":\"module\",\"version\":3,\"metadata\":{},\"exports\":[{\"from\":\"./${package_name}/index\"}]}" > ${2}/../${package_name}.metadata.json
+    echo "$(cat ${LICENSE_BANNER}) ${N} export * from './${package_name}/index'" > ${2}/${3}/../${package_name}.d.ts
+    echo "{\"__symbolic\":\"module\",\"version\":3,\"metadata\":{},\"exports\":[{\"from\":\"./${package_name}/index\"}]}" > ${2}/${3}/../${package_name}.metadata.json
+
+    $NGC -p ${1}/tsconfig-build.json --noEmitHelpers --outDir ${2}-closure/${4} --module commonjs --googModuleProjectName @angular/${4}
   fi
 
   for DIR in ${1}/* ; do
@@ -275,7 +281,7 @@ compilePackage() {
     BASE_DIR=$(basename "${DIR}")
     # Skip over directories that are not nested entry points
     [[ -e ${DIR}/tsconfig-build.json && "${BASE_DIR}" != "integrationtest" ]] || continue
-    compilePackage ${DIR} ${2}/${BASE_DIR} ${3} true
+    compilePackage ${DIR} ${2} ${3}/${BASE_DIR} ${4} true
   done
 }
 
@@ -436,7 +442,7 @@ do
   if [[ ${COMPILE_SOURCE} == true ]]; then
     rm -rf ${OUT_DIR}
     rm -f ${ROOT_OUT_DIR}/${PACKAGE}.js
-    compilePackage ${SRC_DIR} ${OUT_DIR} ${PACKAGE}
+    compilePackage ${SRC_DIR} ${ROOT_OUT_DIR} ${PACKAGE} ${PACKAGE}
   fi
 
   if [[ ${BUNDLE} == true ]]; then
