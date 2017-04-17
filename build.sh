@@ -272,7 +272,7 @@ compilePackage() {
     echo "$(cat ${LICENSE_BANNER}) ${N} export * from './${package_name}/index'" > ${2}/${3}/../${package_name}.d.ts
     echo "{\"__symbolic\":\"module\",\"version\":3,\"metadata\":{},\"exports\":[{\"from\":\"./${package_name}/index\"}],\"flatModuleIndexRedirect\":true}" > ${2}/${3}/../${package_name}.metadata.json
 
-    $NGC -p ${1}/tsconfig-build.json --noEmitHelpers --outDir ${2}-closure/${4} --module commonjs --googModuleProjectName @angular/${4}
+    $NGC -p ${1}/tsconfig-build.json --noEmitHelpers --outDir ${2}-closure/${4} --module commonjs --googModuleProjectName @angular/${4} --moduleIdBasePath $(readlink -e ${2}-closure)
   fi
 
   for DIR in ${1}/* ; do
@@ -429,6 +429,7 @@ do
   ROOT_OUT_DIR=${PWD}/dist/packages
   OUT_DIR=${ROOT_OUT_DIR}/${PACKAGE}
   NPM_DIR=${PWD}/dist/packages-dist/${PACKAGE}
+  NPM_CLOSURE_DIR=${PWD}/dist/packages-closure/${PACKAGE}
   MODULES_DIR=${NPM_DIR}/@angular
   BUNDLES_DIR=${NPM_DIR}/bundles
 
@@ -483,6 +484,17 @@ do
       cd ${NPM_DIR}
       echo "======       EXECUTE: perl -p -i -e \"s/0\.0\.0\-PLACEHOLDER/${VERSION}/g\" $""(grep -ril 0\.0\.0\-PLACEHOLDER .)"
       perl -p -i -e "s/0\.0\.0\-PLACEHOLDER/${VERSION}/g" $(grep -ril 0\.0\.0\-PLACEHOLDER .) < /dev/null 2> /dev/null
+    )
+  fi
+
+  if [[ -d ${NPM_CLOSURE_DIR} ]]; then
+    (
+      echo "======      VERSION: Updating version references"
+      cd ${NPM_CLOSURE_DIR}
+      echo "======       EXECUTE: perl -p -i -e \"s/0\.0\.0\-PLACEHOLDER/¯\\\\_\(ツ\)_\/¯/g\" $""(grep -ril 0\.0\.0\-PLACEHOLDER .)"
+      perl -p -i -e "s/0\.0\.0\-PLACEHOLDER/¯\\\\_\(ツ\)_\/¯/g" $(grep -ril 0\.0\.0\-PLACEHOLDER .) < /dev/null 2> /dev/null
+      echo "======       EXECUTE: perl -p -i -e \"s/0\.0\.0\-ROUTERPLACEHOLDER/¯\\\\_\(ツ\)_\/¯/g\" $""(grep -ril 0\.0\.0\-ROUTERPLACEHOLDER .)"
+      perl -p -i -e "s/0\.0\.0\-ROUTERPLACEHOLDER/¯\\\\_\(ツ\)_\/¯/g" $(grep -ril 0\.0\.0\-ROUTERPLACEHOLDER .) < /dev/null 2> /dev/null
     )
   fi
 
