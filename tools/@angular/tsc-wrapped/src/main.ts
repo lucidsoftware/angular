@@ -81,6 +81,7 @@ export function main(
 
     // file names in tsconfig are resolved relative to this absolute path
     const basePath = path.resolve(process.cwd(), cliOptions.basePath || projectDir);
+    const moduleIdBasePath = cliOptions.moduleIdBasePath || basePath;
 
     // read the configuration options from wherever you store them
     let {parsed, ngOptions} = tsc.readConfiguration(project, basePath, options);
@@ -152,7 +153,13 @@ export function main(
           .replace(/[^a-zA-Z0-9._$]/g, '_');
       },
       shouldIgnoreWarningsForPath: (filePath) => false,
-      fileNameToModuleId: (fileName) => fileName,
+      fileNameToModuleId: (fileName) => {
+        if (fileName.startsWith(moduleIdBasePath)) {
+          return fileName.substr(moduleIdBasePath.length + 1);
+        } else {
+          return fileName;
+        }
+      },
     };
 
     const tsickleCompilerHost =
@@ -232,10 +239,13 @@ export function main(
 if (require.main === module) {
   const args = process.argv.slice(2);
   const tsArgs = process.argv.slice(2);
-  const googModuleNameIndex = tsArgs.indexOf('--googModuleProjectName');
-  if (googModuleNameIndex != -1) {
-    tsArgs.splice(googModuleNameIndex, 2);
-  }
+  const ngcOnlyArgs = ['--moduleIdBasePath', '--googModuleProjectName'];
+  ngcOnlyArgs.forEach(argName => {
+    const argIndex = tsArgs.indexOf(argName);
+    if (argIndex != -1) {
+      tsArgs.splice(argIndex, 2);
+    }
+  });
   let {options, errors} = (ts as any).parseCommandLine(tsArgs);
   check(errors);
   const project = options.project || '.';
