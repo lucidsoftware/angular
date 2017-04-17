@@ -69,7 +69,7 @@ describe('tsc-wrapped', () => {
       "files": ["test.ts"]
     }`);
 
-    main(basePath, {basePath, googModuleProjectName: null})
+    main(basePath, {basePath, googModuleProjectName: null, moduleIdBasePath: null})
         .then(() => {
           const out = readOut('js');
           // No helpers since decorators were lowered
@@ -108,7 +108,7 @@ describe('tsc-wrapped', () => {
       }))
     };
 
-    main(config, {basePath, googModuleProjectName: null})
+    main(config, {basePath, googModuleProjectName: null, moduleIdBasePath: null})
         .then(() => {
           const out = readOut('js');
           // Expand `export *` and fix index import
@@ -139,7 +139,7 @@ describe('tsc-wrapped', () => {
       "files": ["test.ts"]
     }`);
 
-    main(basePath, {basePath, googModuleProjectName: null})
+    main(basePath, {basePath, googModuleProjectName: null, moduleIdBasePath: null})
         .then(() => {
           const out = readOut('js');
           // TypeScript's decorator emit
@@ -172,7 +172,7 @@ describe('tsc-wrapped', () => {
       "files": ["test.ts"]
     }`);
 
-    main(basePath, {basePath, googModuleProjectName: null})
+    main(basePath, {basePath, googModuleProjectName: null, moduleIdBasePath: null})
         .then(() => {
           const out = readOut('js');
           // TypeScript's decorator emit
@@ -201,7 +201,7 @@ describe('tsc-wrapped', () => {
       },
       "files": ["test.ts"]
     }`);
-    main(basePath, {basePath, googModuleProjectName: null}).then(() => done()).catch(e => done.fail(e));
+    main(basePath, {basePath, googModuleProjectName: null, moduleIdBasePath: null}).then(() => done()).catch(e => done.fail(e));
   });
 
   xit('should run quickly (performance baseline)', (done) => {
@@ -231,7 +231,7 @@ describe('tsc-wrapped', () => {
     }`);
     console.time('BASELINE');
 
-    main(basePath, {basePath, googModuleProjectName: null})
+    main(basePath, {basePath, googModuleProjectName: null, moduleIdBasePath: null})
         .then(() => {
           console.timeEnd('BASELINE');
           done();
@@ -265,7 +265,7 @@ describe('tsc-wrapped', () => {
     }`);
     console.time('TSICKLE');
 
-    main(basePath, {basePath, googModuleProjectName: null})
+    main(basePath, {basePath, googModuleProjectName: null, moduleIdBasePath: null})
         .then(() => {
           console.timeEnd('TSICKLE');
           done();
@@ -290,7 +290,7 @@ describe('tsc-wrapped', () => {
       "files": ["test.ts"]
     }`);
 
-    main(basePath, {basePath, googModuleProjectName: null})
+    main(basePath, {basePath, googModuleProjectName: null, moduleIdBasePath: null})
         .then(() => {
           const out = readOut('js.map');
           expect(out).toContain('"sources":["../test.ts"]');
@@ -324,7 +324,7 @@ describe('tsc-wrapped', () => {
     write('test.ts', `const x = 3;
 //# sourceMappingURL=data:application/json;base64,${encodedSourceMap}`);
 
-    main(basePath, {basePath, googModuleProjectName: null})
+    main(basePath, {basePath, googModuleProjectName: null, moduleIdBasePath: null})
         .then(() => {
           const out = readOut('js.map');
           expect(out).toContain('"sources":["other_test.ts"]');
@@ -358,7 +358,7 @@ describe('tsc-wrapped', () => {
     write('test.ts', `const x = 3;
 //# sourceMappingURL=data:application/json;base64,${encodedSourceMap}`);
 
-    main(basePath, {basePath, googModuleProjectName: null})
+    main(basePath, {basePath, googModuleProjectName: null, moduleIdBasePath: null})
         .then(() => {
           const out = readOut('js.map');
           expect(out).toContain('"sources":["other_test.ts"]');
