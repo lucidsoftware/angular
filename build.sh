@@ -473,7 +473,7 @@ do
         addBanners ${BUNDLES_DIR}
         minify ${BUNDLES_DIR}
 
-      ) 2>&1 | grep -v "as external dependency"
+      ) 2>&1 | tr -d '\000' | grep -v "as external dependency"
     else
       echo "======        Copy ${PACKAGE} node tool"
       rsync -a ${OUT_DIR}/ ${NPM_DIR}
@@ -502,10 +502,10 @@ do
     (
       echo "======      VERSION: Updating version references"
       cd ${NPM_CLOSURE_DIR}
-      echo "======       EXECUTE: perl -p -i -e \"s/0\.0\.0\-PLACEHOLDER/¯\\\\_\(ツ\)_\/¯/g\" $""(grep -ril 0\.0\.0\-PLACEHOLDER .)"
-      perl -p -i -e "s/0\.0\.0\-PLACEHOLDER/¯\\\\_\(ツ\)_\/¯/g" $(grep -ril 0\.0\.0\-PLACEHOLDER .) < /dev/null 2> /dev/null
-      echo "======       EXECUTE: perl -p -i -e \"s/0\.0\.0\-ROUTERPLACEHOLDER/¯\\\\_\(ツ\)_\/¯/g\" $""(grep -ril 0\.0\.0\-ROUTERPLACEHOLDER .)"
-      perl -p -i -e "s/0\.0\.0\-ROUTERPLACEHOLDER/¯\\\\_\(ツ\)_\/¯/g" $(grep -ril 0\.0\.0\-ROUTERPLACEHOLDER .) < /dev/null 2> /dev/null
+      echo "======       EXECUTE: perl -p -i -e \"s/0\.0\.0\-PLACEHOLDER/¯\\\\\\\\_\(ツ\)_\/¯/g\" $""(grep -ril 0\.0\.0\-PLACEHOLDER .)"
+      perl -p -i -e "s/0\.0\.0\-PLACEHOLDER/¯\\\\\\\\_\(ツ\)_\/¯/g" $(grep -ril 0\.0\.0\-PLACEHOLDER .) < /dev/null 2> /dev/null
+      echo "======       EXECUTE: perl -p -i -e \"s/0\.0\.0\-ROUTERPLACEHOLDER/¯\\\\\\\\_\(ツ\)_\/¯/g\" $""(grep -ril 0\.0\.0\-ROUTERPLACEHOLDER .)"
+      perl -p -i -e "s/0\.0\.0\-ROUTERPLACEHOLDER/¯\\\\\\\\_\(ツ\)_\/¯/g" $(grep -ril 0\.0\.0\-ROUTERPLACEHOLDER .) < /dev/null 2> /dev/null
     )
   fi
 
