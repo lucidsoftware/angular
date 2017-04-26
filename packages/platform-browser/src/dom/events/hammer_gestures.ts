@@ -12,7 +12,7 @@ import {DOCUMENT} from '../dom_tokens';
 
 import {EventManagerPlugin} from './event_manager';
 
-const EVENT_NAMES = {
+const EVENT_NAMES: {[index: string]: boolean} = {
   // pan
   'pan': true,
   'panstart': true,
@@ -95,7 +95,7 @@ export class HammerGesturesPlugin extends EventManagerPlugin {
   }
 
   supports(eventName: string): boolean {
-    if (!EVENT_NAMES.hasOwnProperty(eventName.toLowerCase()) && !this.isCustomEvent(eventName)) {
+    if (!EVENT_NAMES[eventName.toLowerCase()] && !this.isCustomEvent(eventName)) {
       return false;
     }
 

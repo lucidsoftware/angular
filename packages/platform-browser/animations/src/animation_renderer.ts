@@ -5,8 +5,6 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import {AnimationTriggerMetadata} from '@angular/animations';
-import {ɵAnimationEngine as AnimationEngine} from '@angular/animations/browser';
 import {Injectable, NgZone, Renderer2, RendererFactory2, RendererStyleFlags2, RendererType2} from '@angular/core';
 
 const ANIMATION_PREFIX = '@';
@@ -21,7 +19,7 @@ export class AnimationRendererFactory implements RendererFactory2 {
   private _cdRecurDepth = 0;
 
   constructor(
-      private delegate: RendererFactory2, private engine: AnimationEngine, private _zone: NgZone) {
+      private delegate: RendererFactory2, private engine: any, private _zone: NgZone) {
     engine.onRemovalComplete = (element: any, delegate: Renderer2) => {
       // Note: if an component element has a leave animation, and the component
       // a host leave animation, the view engine will call `removeChild` for the parent
@@ -54,7 +52,7 @@ export class AnimationRendererFactory implements RendererFactory2 {
     this._currentId++;
 
     this.engine.register(namespaceId, hostElement);
-    const animationTriggers = type.data['animation'] as AnimationTriggerMetadata[];
+    const animationTriggers = type.data['animation'] as any[];
     animationTriggers.forEach(
         trigger => this.engine.registerTrigger(
             componentId, namespaceId, hostElement, trigger.name, trigger));
@@ -115,7 +113,7 @@ export class AnimationRendererFactory implements RendererFactory2 {
 
 export class BaseAnimationRenderer implements Renderer2 {
   constructor(
-      protected namespaceId: string, public delegate: Renderer2, public engine: AnimationEngine) {
+      protected namespaceId: string, public delegate: Renderer2, public engine: any) {
     this.destroyNode = this.delegate.destroyNode ? (n) => delegate.destroyNode !(n) : null;
   }
 
@@ -198,7 +196,7 @@ export class BaseAnimationRenderer implements Renderer2 {
 export class AnimationRenderer extends BaseAnimationRenderer implements Renderer2 {
   constructor(
       public factory: AnimationRendererFactory, namespaceId: string, delegate: Renderer2,
-      engine: AnimationEngine) {
+      engine: any) {
     super(namespaceId, delegate, engine);
     this.namespaceId = namespaceId;
   }
