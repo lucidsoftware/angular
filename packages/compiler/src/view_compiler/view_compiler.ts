@@ -127,9 +127,7 @@ class ViewBuilder implements TemplateAstVisitor, LocalResolver {
     // TODO(tbosch): The old view compiler used to use an `any` type
     // for the context in any embedded view. We keep this behaivor for now
     // to be able to introduce the new view compiler without too many errors.
-    this.compType = this.embeddedViewIndex > 0 ?
-        o.DYNAMIC_TYPE :
-        o.expressionType(outputCtx.importExpr(this.component.type.reference)) !;
+    this.compType = o.expressionType(outputCtx.importExpr(this.component.type.reference)) !;
   }
 
   get viewName(): string {
