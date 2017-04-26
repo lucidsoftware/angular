@@ -5,14 +5,12 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import {AnimationTriggerMetadata} from '@angular/animations';
-import {ɵAnimationEngine as AnimationEngine} from '@angular/animations/browser';
 import {Injectable, NgZone, Renderer2, RendererFactory2, RendererStyleFlags2, RendererType2} from '@angular/core';
 
 @Injectable()
 export class AnimationRendererFactory implements RendererFactory2 {
   constructor(
-      private delegate: RendererFactory2, private _engine: AnimationEngine, private _zone: NgZone) {
+      private delegate: RendererFactory2, private _engine: any, private _zone: NgZone) {
   }
 
   createRenderer(hostElement: any, type: RendererType2): Renderer2 {
@@ -20,7 +18,7 @@ export class AnimationRendererFactory implements RendererFactory2 {
     if (!hostElement || !type || !type.data || !type.data['animation']) return delegate;
 
     const namespaceId = type.id;
-    const animationTriggers = type.data['animation'] as AnimationTriggerMetadata[];
+    const animationTriggers = type.data['animation'] as any[];
     animationTriggers.forEach(
         trigger => this._engine.registerTrigger(trigger, namespaceify(namespaceId, trigger.name)));
     return new AnimationRenderer(delegate, this._engine, this._zone, namespaceId);
@@ -32,7 +30,7 @@ export class AnimationRenderer implements Renderer2 {
   private _flushPromise: Promise<any> = null;
 
   constructor(
-      public delegate: Renderer2, private _engine: AnimationEngine, private _zone: NgZone,
+      public delegate: Renderer2, private _engine: any, private _zone: NgZone,
       private _namespaceId: string) {
     this.destroyNode = this.delegate.destroyNode ? (n) => delegate.destroyNode(n) : null;
   }

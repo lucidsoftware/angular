@@ -11,7 +11,6 @@ import {BrowserDetection, createNgZone} from './browser_util';
 
 function initBrowserTests() {
   BrowserDomAdapter.makeCurrent();
-  BrowserDetection.setup();
 }
 
 const _TEST_BROWSER_PLATFORM_PROVIDERS: Provider[] =
