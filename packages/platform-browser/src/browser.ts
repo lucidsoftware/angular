@@ -26,6 +26,15 @@ import {KeyEventsPlugin} from './dom/events/key_events';
 import {DomSharedStylesHost, SharedStylesHost} from './dom/shared_styles_host';
 import {DomSanitizer, DomSanitizerImpl} from './security/dom_sanitization_service';
 
+export function initDomAdapter() {
+  BrowserDomAdapter.makeCurrent();
+  BrowserGetTestability.init();
+}
+
+export function _document(): any {
+  return document;
+}
+
 export const INTERNAL_BROWSER_PLATFORM_PROVIDERS: Provider[] = [
   {provide: PLATFORM_ID, useValue: PLATFORM_BROWSER_ID},
   {provide: PLATFORM_INITIALIZER, useValue: initDomAdapter, multi: true},
@@ -50,17 +59,8 @@ export const BROWSER_SANITIZATION_PROVIDERS: Array<any> = [
 export const platformBrowser: (extraProviders?: Provider[]) => PlatformRef =
     createPlatformFactory(platformCore, 'browser', INTERNAL_BROWSER_PLATFORM_PROVIDERS);
 
-export function initDomAdapter() {
-  BrowserDomAdapter.makeCurrent();
-  BrowserGetTestability.init();
-}
-
 export function errorHandler(): ErrorHandler {
   return new ErrorHandler();
-}
-
-export function _document(): any {
-  return document;
 }
 
 /**

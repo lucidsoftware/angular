@@ -10,6 +10,14 @@ import {ANALYZE_FOR_ENTRY_COMPONENTS, ChangeDetectionStrategy, ChangeDetectorRef
 
 import {CompileIdentifierMetadata, CompileTokenMetadata} from './compile_metadata';
 
+export function assetUrl(pkg: string, path: string = null, type: string = 'src'): string {
+  if (path == null) {
+    return `@angular/${pkg}`;
+  } else {
+    return `@angular/${pkg}/${type}/${path}`;
+  }
+}
+
 const CORE = assetUrl('core');
 
 export interface IdentifierSpec {
