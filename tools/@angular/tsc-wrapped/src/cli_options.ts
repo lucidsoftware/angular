@@ -7,8 +7,8 @@
  */
 export class CliOptions {
   public basePath: string;
-  public googModuleProjectName: string;
-  public moduleIdBasePath: string;
+  public googModuleProjectName: string|null;
+  public moduleIdBasePath: string|null;
   constructor({basePath = null, googModuleProjectName = null, moduleIdBasePath = null}: {basePath?: string, googModuleProjectName?: string, moduleIdBasePath?: string}) {
     this.basePath = basePath;
     this.googModuleProjectName = googModuleProjectName;
