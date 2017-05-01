@@ -10,7 +10,7 @@ import {ANALYZE_FOR_ENTRY_COMPONENTS, ChangeDetectionStrategy, ChangeDetectorRef
 
 import {CompileIdentifierMetadata, CompileTokenMetadata} from './compile_metadata';
 
-export function assetUrl(pkg: string, path: string = null, type: string = 'src'): string {
+export function assetUrl(pkg: string, path: string | null = null, type: string = 'src'): string {
   if (path == null) {
     return `@angular/${pkg}`;
   } else {
@@ -118,14 +118,6 @@ export class Identifiers {
     runtime: null
   };
   static createComponentFactory: IdentifierSpec = {name: 'ɵccf', moduleUrl: CORE, runtime: ɵccf};
-}
-
-export function assetUrl(pkg: string, path: string | null = null, type: string = 'src'): string {
-  if (path == null) {
-    return `@angular/${pkg}`;
-  } else {
-    return `@angular/${pkg}/${type}/${path}`;
-  }
 }
 
 export function resolveIdentifier(identifier: IdentifierSpec) {
