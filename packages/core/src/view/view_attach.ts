@@ -76,6 +76,20 @@ export function detachEmbeddedView(elementData: ElementData, viewIndex?: number)
   return view;
 }
 
+export function detachProjectedView(view: ViewData) {
+  if (!view.parentNodeDef || !(view.parentNodeDef.flags & NodeFlags.ProjectedTemplate)) {
+    return;
+  }
+  const dvcElementData = declaredViewContainer(view);
+  if (dvcElementData) {
+    const projectedViews = dvcElementData.template._projectedViews;
+    if (projectedViews) {
+      removeFromArray(projectedViews, projectedViews.indexOf(view));
+      Services.dirtyParentQueries(view);
+    }
+  }
+}
+
 export function moveEmbeddedView(
     elementData: ElementData, oldViewIndex: number, newViewIndex: number): ViewData {
   const embeddedViews = elementData.viewContainer !._embeddedViews;
