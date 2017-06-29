@@ -384,7 +384,7 @@ describe('tsc-wrapped', () => {
       "files": ["test.ts"]
     }`);
 
-    main(basePath, {basePath})
+    main(basePath, {basePath, googModuleProjectName: null, moduleIdBasePath: null})
         .then(() => {
           const fileOutput = readOut('js');
           expect(fileOutput).toContain(`export { A, B } from './dep/index'`);
@@ -410,7 +410,7 @@ describe('tsc-wrapped', () => {
       "files": ["test.ts"]
     }`);
 
-    main(basePath, {basePath})
+    main(basePath, {basePath, googModuleProjectName: null, moduleIdBasePath: null})
         .then(() => {
           const fileOutput = readOut('js');
           expect(fileOutput).toContain(`var index_1 = require("./dep/index");`);
