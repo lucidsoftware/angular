@@ -224,8 +224,8 @@ export class AnimationRenderer extends BaseAnimationRenderer implements Renderer
       if (name.charAt(0) != ANIMATION_PREFIX) {
         [name, phase] = parseTriggerCallbackName(name);
       }
-      return this.engine.listen(this.namespaceId, element, name, phase, event => {
-        const countId = (event as any)['_data'] || -1;
+      return this.engine.listen(this.namespaceId, element, name, phase, (event: any) => {
+        const countId = event['_data'] || -1;
         this.factory.scheduleListenerCallback(countId, callback, event);
       });
     }
