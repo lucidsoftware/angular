@@ -5,18 +5,16 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import {AnimationBuilder, AnimationFactory, AnimationMetadata, AnimationOptions, AnimationPlayer, NoopAnimationPlayer, sequence} from '@angular/animations';
 import {Injectable, RendererFactory2, RendererType2, ViewEncapsulation} from '@angular/core';
 
 import {AnimationRenderer} from './animation_renderer';
 
 @Injectable()
-export class BrowserAnimationBuilder extends AnimationBuilder {
+export class BrowserAnimationBuilder {
   private _nextAnimationId = 0;
   private _renderer: AnimationRenderer;
 
   constructor(rootRenderer: RendererFactory2) {
-    super();
     const typeData = {
       id: '0',
       encapsulation: ViewEncapsulation.None,
@@ -26,29 +24,29 @@ export class BrowserAnimationBuilder extends AnimationBuilder {
     this._renderer = rootRenderer.createRenderer(document.body, typeData) as AnimationRenderer;
   }
 
-  build(animation: AnimationMetadata|AnimationMetadata[]): AnimationFactory {
+  build(animation: any|any[]): any {
     const id = this._nextAnimationId.toString();
     this._nextAnimationId++;
-    const entry = Array.isArray(animation) ? sequence(animation) : animation;
+    const entry = Array.isArray(animation) ? {type: 2, animation} : animation;
     issueAnimationCommand(this._renderer, null, id, 'register', [entry]);
     return new BrowserAnimationFactory(id, this._renderer);
   }
 }
 
-export class BrowserAnimationFactory extends AnimationFactory {
-  constructor(private _id: string, private _renderer: AnimationRenderer) { super(); }
+export class BrowserAnimationFactory {
+  constructor(private _id: string, private _renderer: AnimationRenderer) {}
 
-  create(element: any, options?: AnimationOptions): AnimationPlayer {
+  create(element: any, options?: any): any {
     return new RendererAnimationPlayer(this._id, element, options || {}, this._renderer);
   }
 }
 
-export class RendererAnimationPlayer implements AnimationPlayer {
-  public parentPlayer: AnimationPlayer|null = null;
+export class RendererAnimationPlayer {
+  public parentPlayer: any|null = null;
   private _started = false;
 
   constructor(
-      public id: string, public element: any, options: AnimationOptions,
+      public id: string, public element: any, options: any,
       private _renderer: AnimationRenderer) {
     this._command('create', options);
   }
