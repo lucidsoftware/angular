@@ -35,7 +35,7 @@
     "@angular-devkit/core": "^7.0.4",
     "@angular-devkit/schematics": "^7.0.4",
     "@bazel/karma": "~0.22.0",
-    "@bazel/typescript": "~0.22.0",
+    "@bazel/typescript": "lucidsoftware/bazel-typescript",
     "@schematics/angular": "^7.0.4",
     "@types/chokidar": "1.7.3",
     "@types/convert-source-map": "^1.5.1",

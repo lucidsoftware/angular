@@ -14,7 +14,7 @@
     "@angular/compiler": "file:../angular/dist/packages-dist/compiler",
     "@angular/compiler-cli": "file:../angular/dist/packages-dist/compiler-cli",
     "@bazel/karma": "0.22.0",
-    "@bazel/typescript": "0.22.0",
+    "@bazel/typescript": "lucidsoftware/bazel-typescript",
     "@types/jasmine": "2.8.8",
     "@types/source-map": "0.5.1",
     "protractor": "5.1.2",
