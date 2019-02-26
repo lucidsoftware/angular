@@ -14,6 +14,7 @@ load(
     "DEPS_ASPECTS",
     "NodeModuleInfo",
     "collect_node_modules_aspect",
+    "TsConfigInfo",
     "compile_ts",
     "ts_providers_dict_to_struct",
     "tsc_wrapped_tsconfig",
@@ -149,13 +150,15 @@ def _expected_outs(ctx):
 
     factory_basename_set = depset([_basename_of(ctx, src) for src in ctx.files.factories])
 
+    package_prefix = ctx.label.package + "/" if ctx.label.package else ""
     for src in ctx.files.srcs + ctx.files.assets:
-        package_prefix = ctx.label.package + "/" if ctx.label.package else ""
 
         # Strip external repository name from path if src is from external repository
         # If src is from external repository, it's short_path will be ../<external_repo_name>/...
         short_path = src.short_path if src.short_path[0:2] != ".." else "/".join(src.short_path.split("/")[2:])
-
+        if not short_path.startswith(package_prefix):
+            # Just skip everything that's not in this package. We'll just assume they are compiled elsewhere.
+            continue
         if short_path.endswith(".ts") and not short_path.endswith(".d.ts"):
             basename = short_path[len(package_prefix):-len(".ts")]
             if (len(factory_basename_set.to_list()) == 0 or basename in factory_basename_set.to_list()):
@@ -400,7 +403,8 @@ def _compile_action(ctx, inputs, outputs, messages_out, tsconfig_file, node_opts
     # If the user supplies a tsconfig.json file, the Angular compiler needs to read it
     if hasattr(ctx.attr, "tsconfig") and ctx.file.tsconfig:
         file_inputs.append(ctx.file.tsconfig)
-
+        if TsConfigInfo in ctx.attr.tsconfig:
+            file_inputs.extend(ctx.attr.tsconfig[TsConfigInfo].deps)
     # Also include files from npm fine grained deps as action_inputs.
     # These deps are identified by the NodeModuleInfo provider.
     for d in ctx.attr.deps:

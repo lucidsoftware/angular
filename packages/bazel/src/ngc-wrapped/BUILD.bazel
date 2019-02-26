@@ -11,8 +11,7 @@ ts_library(
     node_modules = "@npm//typescript:typescript__typings",
     tsconfig = ":tsconfig.json",
     visibility = [
-        "//packages/bazel:__pkg__",
-        "//packages/bazel/test/ngc-wrapped:__subpackages__",
+        "//visibility:public",
     ],
     deps = [
         # BEGIN-INTERNAL
