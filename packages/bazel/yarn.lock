@@ -59,10 +59,9 @@
     "@angular-devkit/core" "7.3.0-rc.0"
     rxjs "6.3.3"
 
-"@bazel/typescript@^0.23.2":
-  version "0.23.2"
-  resolved "https://registry.yarnpkg.com/@bazel/typescript/-/typescript-0.23.2.tgz#a3ff199880855259d84216cb41644c1d9a0fad14"
-  integrity sha512-GrTyDW6Fvp/rgnxZGYampB5/QmDWvxtLEtUyMCPa/QXFR1OVxaMWeHxxuFEcES2UKJegqBDKAA8IzX21x4UbEw==
+"@bazel/typescript@lucidsoftware/bazel-typescript":
+  version "0.25.1"
+  resolved "https://codeload.github.com/lucidsoftware/bazel-typescript/tar.gz/5c395e1a92219f8b2f3b98671c443226fb0703a6"
   dependencies:
     jasmine-core "2.8.0"
     protobufjs "5.0.3"
