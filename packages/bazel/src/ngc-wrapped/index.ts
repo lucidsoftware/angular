@@ -289,7 +289,19 @@ export function compile({allDepsCompiledWithBazel = true, compilerOpts, tsHost, 
           program, bazelHost, bazelHost, compilerOpts, targetSourceFile, writeFile,
           cancellationToken, emitOnlyDtsFiles, {
             beforeTs: customTransformers.before,
-            afterTs: customTransformers.after,
+            afterTs: [(context: ts.TransformationContext) => {
+              const visit: ts.Visitor = (node: ts.Node) => {
+                  if (ts.isModifier(node) && node.kind === ts.SyntaxKind.StaticKeyword) {
+                      const newNode = ts.createModifier(ts.SyntaxKind.StaticKeyword);
+                      ts.addSyntheticLeadingComment(newNode, ts.SyntaxKind.MultiLineCommentTrivia, '* @nocollapse ');
+                      return newNode;
+                  } else {
+                      return ts.visitEachChild(node, visit, context);
+                  }
+              };
+
+              return node => ts.visitNode(node, visit);
+          }].concat(customTransformers.after),
           });
 
   if (!gatherDiagnostics) {
